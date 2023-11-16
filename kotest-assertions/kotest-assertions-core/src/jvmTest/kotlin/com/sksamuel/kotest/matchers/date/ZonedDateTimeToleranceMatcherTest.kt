@@ -38,12 +38,12 @@ class ZonedDateTimeToleranceMatcherTest : WordSpec() {
 
          "match inside tolerance interval, same offset" {
             ZonedDateTime.of(2023, 11, 14, 1, 2, 0, 0, chicagoTimeZone) shouldBe
-               (ZonedDateTime.of(2023, 11, 14, 1, 30, 0, 0, chicagoTimeZone) plusOrMinus 30.minutes)
+               (ZonedDateTime.of(2023, 11, 14, 1, 30, 0, 0, chicagoTimeZone) plusOrMinus (30.minutes and 30.seconds))
          }
 
          "match inside tolerance interval, another offset" {
             ZonedDateTime.of(2023, 11, 14, 1, 2, 0, 0, chicagoTimeZone) shouldBe
-               (ZonedDateTime.of(2023, 11, 14, 2, 30, 0, 0, newYorkTimeZone) plusOrMinus 30.minutes)
+               (ZonedDateTime.of(2023, 11, 14, 2, 30, 0, 0, newYorkTimeZone) plusOrMinus (30.minutes and 30.seconds))
          }
 
          "match exactly on upper bound" {
