@@ -57,3 +57,18 @@ fun <T: Comparable<T>> intersect(range: ClosedRange<T>) = object : Matcher<Close
       )
    }
 }
+
+fun <T: Comparable<T>> intersect(interval: Range<T>) = object : Matcher<Range<T>> {
+   override fun test(value: Range<T>): MatcherResult {
+      if (interval.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
+
+      val match = !interval.lessThan(value) && !value.lessThan(interval)
+
+      return MatcherResult(
+         match,
+         { "Range ${value.print().value} should intersect ${interval.print().value}, but doesn't" },
+         { "Range ${value.print().value} should not intersect ${interval.print().value}, but does" }
+      )
+   }
+}
+
