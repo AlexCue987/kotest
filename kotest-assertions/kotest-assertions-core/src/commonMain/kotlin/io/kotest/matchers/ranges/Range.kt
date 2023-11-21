@@ -14,7 +14,10 @@ data class Range<T: Comparable<T>>(
       return "${if(start.edgeType == RangeEdgeType.INCLUSIVE) "[" else "("}${start.value}, ${end.value}${if(end.edgeType == RangeEdgeType.INCLUSIVE) "]" else ")"}"
    }
 
-   fun isEmpty() = start.value == end.value && end.edgeType == RangeEdgeType.EXCLUSIVE
+   fun isEmpty() = start.value == end.value && (
+         start.edgeType == RangeEdgeType.EXCLUSIVE ||
+         end.edgeType == RangeEdgeType.EXCLUSIVE
+      )
 
    fun lessThan(other: Range<T>): Boolean {
       val endOfThis: T = this.end.value
