@@ -17,7 +17,7 @@ import io.kotest.matchers.shouldNot
  * @see [intersect]
  */
 infix fun <T: Comparable<T>> ClosedRange<T>.shouldIntersect(range: ClosedRange<T>): ClosedRange<T> {
-   this should intersect(range)
+   Range.of(this) should intersect(Range.of(range))
    return this
 }
 
@@ -32,7 +32,7 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldIntersect(range: ClosedRange<T
  * @see [intersect]
  */
 infix fun <T: Comparable<T>> ClosedRange<T>.shouldNotIntersect(range: ClosedRange<T>): ClosedRange<T> {
-   this shouldNot intersect(range)
+   Range.of(this) shouldNot intersect(Range.of(range))
    return this
 }
 
@@ -44,30 +44,16 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldNotIntersect(range: ClosedRang
  * An empty range will always fail. If you need to check for empty range, use [Iterable.shouldBeEmpty]
  *
  */
-fun <T: Comparable<T>> intersect(range: ClosedRange<T>) = object : Matcher<ClosedRange<T>> {
-   override fun test(value: ClosedRange<T>): MatcherResult {
+fun <T: Comparable<T>> intersect(range: Range<T>) = object : Matcher<Range<T>> {
+   override fun test(value: Range<T>): MatcherResult {
       if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
 
-      val match = (value.endInclusive >= range.start) && (value.start <= range.endInclusive)
+      val match = !range.lessThan(value) && !value.lessThan(range)
 
       return MatcherResult(
          match,
          { "Range ${value.print().value} should intersect ${range.print().value}, but doesn't" },
          { "Range ${value.print().value} should not intersect ${range.print().value}, but does" }
-      )
-   }
-}
-
-fun <T: Comparable<T>> intersect(interval: Range<T>) = object : Matcher<Range<T>> {
-   override fun test(value: Range<T>): MatcherResult {
-      if (interval.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
-
-      val match = !interval.lessThan(value) && !value.lessThan(interval)
-
-      return MatcherResult(
-         match,
-         { "Range ${value.print().value} should intersect ${interval.print().value}, but doesn't" },
-         { "Range ${value.print().value} should not intersect ${interval.print().value}, but does" }
       )
    }
 }
