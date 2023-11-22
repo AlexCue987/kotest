@@ -23,7 +23,7 @@ data class Range<T: Comparable<T>>(
       val endOfThis: T = this.end.value
       val startOfOther: T = other.start.value
       return when {
-         (this.end.edgeType== RangeEdgeType.EXCLUSIVE && other.start.edgeType == RangeEdgeType.EXCLUSIVE) -> (endOfThis < startOfOther)
+         (this.end.edgeType== RangeEdgeType.INCLUSIVE && other.start.edgeType == RangeEdgeType.INCLUSIVE) -> (endOfThis < startOfOther)
          else -> (endOfThis <= startOfOther)
       }
    }

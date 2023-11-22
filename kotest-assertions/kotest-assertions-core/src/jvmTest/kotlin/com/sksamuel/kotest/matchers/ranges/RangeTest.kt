@@ -1,7 +1,11 @@
 package com.sksamuel.kotest.matchers.ranges
 
+import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrowAny
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.data.forAll
+import io.kotest.data.row
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.ranges.Range
@@ -51,6 +55,32 @@ class RangeTest: WordSpec() {
             Range.openClosed(1, 1).isEmpty().shouldBeTrue()
             Range.closedOpen(1, 1).isEmpty().shouldBeTrue()
             Range.openOpen(1, 1).isEmpty().shouldBeTrue()
+         }
+      }
+
+      "lessThan" should {
+            "true if gap" {
+               openOpenRange.lessThan(closedOpenRange).shouldBeTrue()
+               closedOpenRange.greaterThan(openOpenRange).shouldBeTrue()
+            }
+
+            "true if common edge but not both are inclusive" {
+               forAll(
+                  row(Range.openOpen(1, 2), Range.openOpen(2, 3), "both ends exclusive"),
+                  row(Range.openClosed(1, 2), Range.openOpen(2, 3), "left inclusive, right exclusive"),
+                  row(Range.openOpen(1, 2), Range.closedOpen(2, 3), "left exclusive, right inclusive"),
+               ) { left, right, description ->
+                  withClue(description) {
+                     assertSoftly {
+                        left.lessThan(right).shouldBeTrue()
+                        right.greaterThan(left).shouldBeTrue()
+                     }
+                  }
+               }
+            }
+
+         "false if common edge and both ends are inclusive" {
+            Range.openClosed(1, 2).lessThan(Range.closedOpen(2, 3)).shouldBeFalse()
          }
       }
    }
