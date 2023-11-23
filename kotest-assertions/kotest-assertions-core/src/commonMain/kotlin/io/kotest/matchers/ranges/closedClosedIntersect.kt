@@ -21,6 +21,47 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldIntersect(range: ClosedRange<T
    return this
 }
 
+//fun <T: Comparable<T>> shouldIntersect(left: ClosedRange<T>, right: ClosedRange<T>): ClosedRange<T> {
+//   Range.of(left) should intersect(Range.of(right))
+//   return left
+//}
+//
+//@OptIn(ExperimentalStdlibApi::class)
+//fun <T: Comparable<T>> shouldIntersect(left: OpenEndRange<T>, right: ClosedRange<T>): OpenEndRange<T> {
+//   Range.of(left) should intersect(Range.of(right))
+//   return left
+//}
+//
+//@OptIn(ExperimentalStdlibApi::class)
+//fun <T: Comparable<T>> shouldIntersect(left: ClosedRange<T>, right: OpenEndRange<T>): ClosedRange<T> {
+//   Range.of(left) should intersect(Range.of(right))
+//   return left
+//}
+//
+//@OptIn(ExperimentalStdlibApi::class)
+//fun <T: Comparable<T>> shouldIntersect(left: OpenEndRange<T>, right: OpenEndRange<T>): OpenEndRange<T> {
+//   Range.of(left) should intersect(Range.of(right))
+//   return left
+//}
+
+@OptIn(ExperimentalStdlibApi::class)
+infix fun <T: Comparable<T>> OpenEndRange<T>.shouldIntersect(range: ClosedRange<T>): OpenEndRange<T> {
+   Range.of(this) should intersect(Range.of(range))
+   return this
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+infix fun <T: Comparable<T>> ClosedRange<T>.shouldIntersect(range: OpenEndRange<T>): ClosedRange<T> {
+   Range.of(this) should intersect(Range.of(range))
+   return this
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+infix fun <T: Comparable<T>> OpenEndRange<T>.shouldIntersect(range: OpenEndRange<T>): OpenEndRange<T> {
+   Range.of(this) should intersect(Range.of(range))
+   return this
+}
+
 /**
  * Verifies that this [ClosedRange] does not intersect with another [ClosedRange].
  *
@@ -32,6 +73,24 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldIntersect(range: ClosedRange<T
  * @see [intersect]
  */
 infix fun <T: Comparable<T>> ClosedRange<T>.shouldNotIntersect(range: ClosedRange<T>): ClosedRange<T> {
+   Range.of(this) shouldNot intersect(Range.of(range))
+   return this
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+infix fun <T: Comparable<T>> ClosedRange<T>.shouldNotIntersect(range: OpenEndRange<T>): ClosedRange<T> {
+   Range.of(this) shouldNot intersect(Range.of(range))
+   return this
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+infix fun <T: Comparable<T>> OpenEndRange<T>.shouldNotIntersect(range: ClosedRange<T>): OpenEndRange<T> {
+   Range.of(this) shouldNot intersect(Range.of(range))
+   return this
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+infix fun <T: Comparable<T>> OpenEndRange<T>.shouldNotIntersect(range: OpenEndRange<T>): OpenEndRange<T> {
    Range.of(this) shouldNot intersect(Range.of(range))
    return this
 }
