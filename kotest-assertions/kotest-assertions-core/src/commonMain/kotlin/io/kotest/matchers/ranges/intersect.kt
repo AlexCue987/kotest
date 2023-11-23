@@ -38,9 +38,9 @@ infix fun <T: Comparable<T>> OpenEndRange<T>.shouldIntersect(range: ClosedRange<
 }
 
 /**
- * Verifies that this [ClosedRange] intersects with a [OpenEndRange].
+ * Verifies that this [ClosedRange] intersects with an [OpenEndRange].
  *
- * Assertion to check that this [ClosedRange] intersects with a [OpenEndRange].
+ * Assertion to check that this [ClosedRange] intersects with an [OpenEndRange].
  *
  * @see [shouldIntersect]
  * @see [intersect]
@@ -80,18 +80,44 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldNotIntersect(range: ClosedRang
    return this
 }
 
+/**
+ * Verifies that this [ClosedRange] does not intersect with an [OpenEndRange].
+ *
+ * Assertion to check that this [ClosedRange] does not intersect with an [OpenEndRange].
+ *
+ * @see [shouldNotIntersect]
+ * @see [intersect]
+ */
 @OptIn(ExperimentalStdlibApi::class)
 infix fun <T: Comparable<T>> ClosedRange<T>.shouldNotIntersect(range: OpenEndRange<T>): ClosedRange<T> {
    Range.of(this) shouldNot intersect(Range.of(range))
    return this
 }
 
+/**
+ * Verifies that this [OpenEndRange] does not intersect with a [ClosedRange].
+ *
+ * Assertion to check that this [OpenEndRange] does not intersect with a [ClosedRange].
+ *
+ * An empty range will always fail. If you need to check for empty range, use [ClosedRange.shouldBeEmpty]
+ *
+ * @see [shouldNotIntersect]
+ * @see [intersect]
+ */
 @OptIn(ExperimentalStdlibApi::class)
 infix fun <T: Comparable<T>> OpenEndRange<T>.shouldNotIntersect(range: ClosedRange<T>): OpenEndRange<T> {
    Range.of(this) shouldNot intersect(Range.of(range))
    return this
 }
 
+/**
+ * Verifies that this [OpenEndRange] does not intersect with another [OpenEndRange].
+ *
+ * Assertion to check that this [OpenEndRange] does not intersect with another [OpenEndRange].
+ *
+ * @see [shouldNotIntersect]
+ * @see [intersect]
+ */
 @OptIn(ExperimentalStdlibApi::class)
 infix fun <T: Comparable<T>> OpenEndRange<T>.shouldNotIntersect(range: OpenEndRange<T>): OpenEndRange<T> {
    Range.of(this) shouldNot intersect(Range.of(range))
