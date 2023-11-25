@@ -59,9 +59,6 @@ class ListMatcher {
         return bestMatch(matches)
     }
 
-    private fun <T> listsDoNotMatch(expected: List<T>, actual: List<T>) =
-            RangeMatch(false, 0 until expected.size, 0 until actual.size)
-
     fun <T> matches(expected: TailOfList<T>,
                     actual: TailOfList<T>,
                     branchDirection: BranchDirection = BranchDirection.ALL,
