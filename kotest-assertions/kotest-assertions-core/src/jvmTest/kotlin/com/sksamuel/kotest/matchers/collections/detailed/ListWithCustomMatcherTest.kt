@@ -15,13 +15,13 @@ class ListWithCustomMatcherTest: StringSpec() {
             shouldThrow<AssertionError> {
                 matchLists(crew, sameCrewInLowerCase)
             }
-            matchLists(crew, sameCrewInLowerCase, { a: String, b: String -> a.lowercase() == b.lowercase() })
+            matchLists(crew, sameCrewInLowerCase) { a: String, b: String -> a.lowercase() == b.lowercase() }
         }
 
         "findsMismatchesInStringsWithCustomMatcher" {
             val anotherCrew = listOf("Yoda", "Chewbacca", "Leia")
             val thrown = shouldThrow<AssertionError> {
-                matchLists(crew, anotherCrew, { a: String, b: String -> a.lowercase() == b.lowercase() })
+                matchLists(crew, anotherCrew) { a: String, b: String -> a.lowercase() == b.lowercase() }
             }
             thrown.message shouldBe """
 Match:
@@ -40,14 +40,14 @@ actual[2] = Leia
             shouldThrow<AssertionError> {
                 matchLists(expected, actual)
             }
-            matchLists(expected, actual, { a, b -> b in (a - 0.1)..(a + 0.1) })
+            matchLists(expected, actual) { a, b -> b in (a - 0.1)..(a + 0.1) }
         }
 
         "findsMismatchesInDoublesWithTolerance" {
             val expected = listOf(1.0, 2.0)
             val actual = listOf(0.949, 2.51)
             val thrown = shouldThrow<AssertionError> {
-                matchLists(expected, actual, { a, b -> b in (a - 0.05)..(a + 0.05) })
+                matchLists(expected, actual) { a, b -> b in (a - 0.05)..(a + 0.05) }
             }
             thrown.message shouldBe """
 Mismatch:
