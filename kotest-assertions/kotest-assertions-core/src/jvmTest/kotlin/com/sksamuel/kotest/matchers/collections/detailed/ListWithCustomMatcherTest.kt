@@ -7,8 +7,8 @@ import io.kotest.matchers.shouldBe
 import kotlin.text.lowercase
 
 class ListWithCustomMatcherTest: StringSpec() {
-    val crew = listOf("Yoda", "Chewbacca", "Luke")
-    val sameCrewInLowerCase = crew.map { it.lowercase() }
+    private val crew = listOf("Yoda", "Chewbacca", "Luke")
+    private val sameCrewInLowerCase = crew.map { it.lowercase() }
 
     init {
         "matchesStringsWithCustomMatcher" {
