@@ -5,26 +5,21 @@ import io.kotest.matchers.collections.detailed.distance.possibleMatchDescription
 
 fun<T> matchLists(expected: List<T>,
                      actual: List<T>,
-                     matcher: (left: T, right: T) -> Boolean = {left, right -> left == right},
-                     timeoutInMs: Long = 100L,
-                     message: String = "") {
-    val assertionResult = compareLists(expected, actual, matcher, timeoutInMs, message)
+                     matcher: (left: T, right: T) -> Boolean = {left, right -> left == right}
+) {
+    val assertionResult = compareLists(expected, actual, matcher)
     assertionResult.assertSuccess()
 }
 
 fun <T> compareLists(expected: List<T>, actual: List<T>,
-                     matcher: (left: T, right: T) -> Boolean = {left, right -> left == right},
-                     timeoutInMs: Long = 100L,
-                     message: String = ""): AssertionResult {
-    val listMatcher = ListMatcher(timeoutInMs)
+                     matcher: (left: T, right: T) -> Boolean = {left, right -> left == right}
+): AssertionResult {
+    val listMatcher = ListMatcher()
     val results = listMatcher.match(expected, actual, matcher)
     return if (results.size == 1 && results[0].match) {
         AssertionResult(true)
     } else {
-        val mismatchDescription = listOf(message,
-                printMatches(expected, actual, results)
-        )
-                .joinNotEmptyToString("\n")
+        val mismatchDescription = printMatches(expected, actual, results)
         val possibleMatches = findClosestMatchesForLists(expected, actual, results)
         val possibleMatchDescription = if(possibleMatches.isEmpty()) ""
         else "\nPossible matches:\n${possibleMatches.joinToString("\n\n") { possibleMatchDescription(it) }}"
@@ -50,7 +45,7 @@ data class SubList<T>(val items: List<T>, val offset: Int = 0){
 
 enum class BranchDirection{ALL, LEFT, MIDDLE, RIGHT}
 
-class ListMatcher(timeoutInMs: Long = 100){
+class ListMatcher(){
     fun <T> match(expected: List<T>,
                      actual: List<T>,
                      matcher: (left: T, right: T) -> Boolean = {left, right -> left == right}): List<RangeMatch> {
