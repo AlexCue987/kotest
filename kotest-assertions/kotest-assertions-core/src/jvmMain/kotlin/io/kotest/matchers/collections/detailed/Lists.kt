@@ -51,17 +51,12 @@ data class TailOfList<T>(val items: List<T>, val offset: Int = 0){
 
 enum class BranchDirection{ALL, LEFT, MIDDLE, RIGHT}
 
-class ListMatcher(){
+class ListMatcher {
     fun <T> match(expected: List<T>,
                      actual: List<T>,
                      matcher: (left: T, right: T) -> Boolean = {left, right -> left == right}): List<RangeMatch> {
-        return try{
-            val matches = matches(TailOfList(expected), TailOfList(actual), matcher= matcher)
-            bestMatch(matches)
-        }catch (ex: MatchTimedOut){
-            println("Match timed out.")
-            listOf(listsDoNotMatch(expected, actual))
-        }
+        val matches = matches(TailOfList(expected), TailOfList(actual), matcher= matcher)
+        return bestMatch(matches)
     }
 
     private fun <T> listsDoNotMatch(expected: List<T>, actual: List<T>) =
@@ -158,8 +153,6 @@ class ListMatcher(){
         }
     }
 }
-
-class MatchTimedOut: Exception()
 
 data class AssertionResult(val success: Boolean, val message: String = ""){
    fun assertSuccess(){
