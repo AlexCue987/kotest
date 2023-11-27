@@ -7,7 +7,7 @@ import com.sksamuel.kotest.matchers.collections.detailed.distance.redTriangle
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.detailed.IndexedElement
 import io.kotest.matchers.collections.detailed.PossibleMatch
-import io.kotest.matchers.collections.detailed.RangeMatch
+import io.kotest.matchers.collections.detailed.MatchResultsOfSubLists
 import io.kotest.matchers.collections.detailed.distance.AtomicMismatch
 import io.kotest.matchers.collections.detailed.distance.Distance
 import io.kotest.matchers.collections.detailed.distance.Match
@@ -22,17 +22,17 @@ class FindClosestMatchesForListsTest: StringSpec() {
             val expected = listOf(redCircle, blueCircle, redTriangle)
             val actual = listOf(blueCircle, redTriangle, redCircle)
             val elementMatches = listOf(
-                RangeMatch(
+                MatchResultsOfSubLists(
                     match = false,
                     leftRange = -1..-2,
                     rightRange = 0..0
                 ),
-                RangeMatch(
+                MatchResultsOfSubLists(
                     match = true,
                     leftRange = 1..2,
                     rightRange = 0..1
                 ),
-                RangeMatch(
+                MatchResultsOfSubLists(
                     match = false,
                     leftRange = 2..2,
                     rightRange = -1..-2
@@ -63,17 +63,17 @@ class FindClosestMatchesForListsTest: StringSpec() {
             val expected = listOf(sweetGreenApple, sweetRedApple, sweetGreenPear)
             val actual = listOf(sweetGreenApple, tartRedCherry, sweetGreenPear)
             val elementMatches = listOf(
-                RangeMatch(
+                MatchResultsOfSubLists(
                     match = true,
                     leftRange = 0..0,
                     rightRange = 0..0
                 ),
-                RangeMatch(
+                MatchResultsOfSubLists(
                     match = false,
                     leftRange = 1..1,
                     rightRange = 1..1
                 ),
-                RangeMatch(
+                MatchResultsOfSubLists(
                     match = true,
                     leftRange = 2..2,
                     rightRange = 2..2
@@ -113,17 +113,17 @@ class FindClosestMatchesForListsTest: StringSpec() {
             val expected = listOf(sweetGreenApple, sweetRedApple, sweetGreenPear)
             val actual = listOf(sweetGreenApple, sourYellowLemon, sweetGreenPear)
             val elementMatches = listOf(
-                RangeMatch(
+                MatchResultsOfSubLists(
                     match = true,
                     leftRange = 0..0,
                     rightRange = 0..0
                 ),
-                RangeMatch(
+                MatchResultsOfSubLists(
                     match = false,
                     leftRange = 1..1,
                     rightRange = 1..1
                 ),
-                RangeMatch(
+                MatchResultsOfSubLists(
                     match = true,
                     leftRange = 2..2,
                     rightRange = 2..2

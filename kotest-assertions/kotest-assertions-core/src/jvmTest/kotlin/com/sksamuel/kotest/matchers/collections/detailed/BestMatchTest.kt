@@ -3,7 +3,7 @@ package com.sksamuel.kotest.matchers.collections.detailed
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.collections.detailed.RangeMatch
+import io.kotest.matchers.collections.detailed.MatchResultsOfSubLists
 import io.kotest.matchers.collections.detailed.bestMatch
 import io.kotest.matchers.collections.detailed.bestTwoMatches
 import io.kotest.matchers.collections.detailed.countMatchedItems
@@ -12,49 +12,49 @@ import io.kotest.matchers.collections.detailed.maxLengthOfMatchedRange
 
 class BestMatchTest: StringSpec() {
     val matches1 = listOf(
-            RangeMatch(true, 1..3, 3..5),
-            RangeMatch(false, 4..5, 6..5),
-            RangeMatch(true, 6..9, 6..9)
+            MatchResultsOfSubLists(true, 1..3, 3..5),
+            MatchResultsOfSubLists(false, 4..5, 6..5),
+            MatchResultsOfSubLists(true, 6..9, 6..9)
     )
 
     val noMatches = listOf(
-            RangeMatch(false, 0..2, 0..3)
+            MatchResultsOfSubLists(false, 0..2, 0..3)
     )
 
     val matches2 = listOf(
-            RangeMatch(true, 1..3, 3..5),
-            RangeMatch(false, 4..4, 6..5),
-            RangeMatch(true, 5..5, 6..6),
-            RangeMatch(false, 6..5, 7..8),
-            RangeMatch(true, 6..7, 9..10)
+            MatchResultsOfSubLists(true, 1..3, 3..5),
+            MatchResultsOfSubLists(false, 4..4, 6..5),
+            MatchResultsOfSubLists(true, 5..5, 6..6),
+            MatchResultsOfSubLists(false, 6..5, 7..8),
+            MatchResultsOfSubLists(true, 6..7, 9..10)
     )
 
     val matches3 = listOf(
-            RangeMatch(true, 1..2, 3..4),
-            RangeMatch(false, 3..4, 5..5),
-            RangeMatch(true, 5..9, 6..10)
+            MatchResultsOfSubLists(true, 1..2, 3..4),
+            MatchResultsOfSubLists(false, 3..4, 5..5),
+            MatchResultsOfSubLists(true, 5..9, 6..10)
     )
 
     val matches4 = listOf(
-            RangeMatch(true, 1..2, 3..4),
-            RangeMatch(false, 3..4, 5..5),
-            RangeMatch(true, 5..5, 6..6),
-            RangeMatch(false, 6..5, 7..8),
-            RangeMatch(true, 6..9, 9..12)
+            MatchResultsOfSubLists(true, 1..2, 3..4),
+            MatchResultsOfSubLists(false, 3..4, 5..5),
+            MatchResultsOfSubLists(true, 5..5, 6..6),
+            MatchResultsOfSubLists(false, 6..5, 7..8),
+            MatchResultsOfSubLists(true, 6..9, 9..12)
     )
 
     val matches5 = listOf(
-            RangeMatch(false, 1..0, 3..2),
-            RangeMatch(true, 1..3, 3..5),
-            RangeMatch(false, 4..5, 6..5),
-            RangeMatch(true, 6..9, 6..9)
+            MatchResultsOfSubLists(false, 1..0, 3..2),
+            MatchResultsOfSubLists(true, 1..3, 3..5),
+            MatchResultsOfSubLists(false, 4..5, 6..5),
+            MatchResultsOfSubLists(true, 6..9, 6..9)
     )
 
     val matches6 = listOf(
-            RangeMatch(false, 1..0, 3..2),
-            RangeMatch(true, 1..2, 3..4),
-            RangeMatch(false, 3..4, 5..5),
-            RangeMatch(true, 5..9, 6..10)
+            MatchResultsOfSubLists(false, 1..0, 3..2),
+            MatchResultsOfSubLists(true, 1..2, 3..4),
+            MatchResultsOfSubLists(false, 3..4, 5..5),
+            MatchResultsOfSubLists(true, 5..9, 6..10)
     )
 
     init {

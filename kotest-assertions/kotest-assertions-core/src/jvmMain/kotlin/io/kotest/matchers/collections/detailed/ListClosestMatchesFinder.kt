@@ -5,7 +5,7 @@ import io.kotest.matchers.collections.detailed.distance.findBestMatches
 
 fun<T> findClosestMatchesForLists(expected: List<T>,
                                actual: List<T>,
-                                  elementMatches:  List<RangeMatch>
+                                  elementMatches:  List<MatchResultsOfSubLists>
 ): List<PossibleMatch> {
     val actualListElementsToMatch = actualListElementsToMatch(elementMatches, actual)
     return actualListElementsToMatch.flatMap { actualIndexed ->
@@ -28,8 +28,8 @@ internal fun bestMatchesForActualElement(
 }
 
 internal fun <T> actualListElementsToMatch(
-   elementMatches: List<RangeMatch>,
-   actual: List<T>
+    elementMatches: List<MatchResultsOfSubLists>,
+    actual: List<T>
 ): List<IndexedElement> {
     val matchedActualIndexes = elementMatches.filter {
         it.match

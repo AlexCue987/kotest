@@ -2,7 +2,7 @@ package com.sksamuel.kotest.matchers.collections.detailed
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.detailed.ListMatcher
-import io.kotest.matchers.collections.detailed.RangeMatch
+import io.kotest.matchers.collections.detailed.MatchResultsOfSubLists
 import io.kotest.matchers.collections.detailed.TailOfList
 import io.kotest.matchers.shouldBe
 
@@ -24,7 +24,7 @@ class ListsTest: StringSpec() {
             val endedLeftSubList = TailOfList(leftList, leftList.size)
             val endedRightSubList = TailOfList(rightList, rightList.size)
             val actual = sut.matches(endedLeftSubList, endedRightSubList, matcher = Any::equals)
-            val expected = listOf(mutableListOf(RangeMatch(false, 3..2, 3..2)))
+            val expected = listOf(mutableListOf(MatchResultsOfSubLists(false, 3..2, 3..2)))
             actual shouldBe expected
         }
 
@@ -32,7 +32,7 @@ class ListsTest: StringSpec() {
             val lastItemOfLeftList = TailOfList(leftList, leftList.size - 1)
             val lastItemOfShortLeftList = TailOfList(shortLeftList, shortLeftList.size - 1)
             val actual = sut.matches(lastItemOfLeftList, lastItemOfShortLeftList, matcher = Any::equals)
-            val expected = listOf(mutableListOf(RangeMatch(true, 2..2, 1..1)))
+            val expected = listOf(mutableListOf(MatchResultsOfSubLists(true, 2..2, 1..1)))
             actual shouldBe expected
         }
 
@@ -40,7 +40,7 @@ class ListsTest: StringSpec() {
             val lastItemOfLeftList = TailOfList(leftList, leftList.size - 1)
             val lastItemOfRightList = TailOfList(rightList, rightList.size - 1)
             val actual = sut.matches(lastItemOfLeftList, lastItemOfRightList, matcher = Any::equals)
-            val expected = listOf(mutableListOf(RangeMatch(false, 2..2, 2..2)))
+            val expected = listOf(mutableListOf(MatchResultsOfSubLists(false, 2..2, 2..2)))
             actual shouldBe expected
         }
 
@@ -48,7 +48,7 @@ class ListsTest: StringSpec() {
             val endedLeftSubList = TailOfList(leftList, leftList.size)
             val rightSubList = TailOfList(rightList, rightList.size - 1)
             val actual = sut.matches(endedLeftSubList, rightSubList, matcher = Any::equals)
-            val expected = listOf(mutableListOf(RangeMatch(false, 3..2, 2..2)))
+            val expected = listOf(mutableListOf(MatchResultsOfSubLists(false, 3..2, 2..2)))
             actual shouldBe expected
         }
 
@@ -56,14 +56,14 @@ class ListsTest: StringSpec() {
             val endedLeftTailOfList = TailOfList(leftList, leftList.size - 1)
             val rightSubList = TailOfList(rightList, rightList.size)
             val actual = sut.matches(endedLeftTailOfList, rightSubList, matcher = Any::equals)
-            val expected = listOf(mutableListOf(RangeMatch(false, 2..2, 3..2)))
+            val expected = listOf(mutableListOf(MatchResultsOfSubLists(false, 2..2, 3..2)))
             actual shouldBe expected
         }
 
         "completeMatch" {
             val left = TailOfList(leftList)
             val actual = sut.matches(left, left, matcher = Any::equals)
-            val expected = listOf(mutableListOf(RangeMatch(true, 0..2, 0..2)))
+            val expected = listOf(mutableListOf(MatchResultsOfSubLists(true, 0..2, 0..2)))
             actual shouldBe expected
         }
 
@@ -73,9 +73,9 @@ class ListsTest: StringSpec() {
             val actual = sut.matches(left, right, matcher = Any::equals)
             val expected = listOf(
                 listOf(
-                    RangeMatch(false, 0..0, -1..-2),
-                    RangeMatch(true, 1..2, 0..1),
-                    RangeMatch(false, 3..2, 2..2)
+                    MatchResultsOfSubLists(false, 0..0, -1..-2),
+                    MatchResultsOfSubLists(true, 1..2, 0..1),
+                    MatchResultsOfSubLists(false, 3..2, 2..2)
                 )
             )
             actual shouldBe expected
@@ -87,8 +87,8 @@ class ListsTest: StringSpec() {
             val actual = sut.matches(left, right, matcher = Any::equals)
             val expected = listOf(
                 listOf(
-                    RangeMatch(false, 0..0, 0..0),
-                    RangeMatch(true, 1..1, 1..1)
+                    MatchResultsOfSubLists(false, 0..0, 0..0),
+                    MatchResultsOfSubLists(true, 1..1, 1..1)
                 )
             )
             actual shouldBe expected
@@ -100,8 +100,8 @@ class ListsTest: StringSpec() {
             val actual = sut.matches(left, right, matcher = Any::equals)
             val expected = listOf(
                 listOf(
-                    RangeMatch(false, 0..1, 0..1),
-                    RangeMatch(true, 2..2, 2..2)
+                    MatchResultsOfSubLists(false, 0..1, 0..1),
+                    MatchResultsOfSubLists(true, 2..2, 2..2)
                 )
             )
             actual shouldBe expected
@@ -113,9 +113,9 @@ class ListsTest: StringSpec() {
             val actual = sut.matches(left, right, matcher = Any::equals)
             val expected = listOf(
                 listOf(
-                    RangeMatch(true, 0..0, 0..0),
-                    RangeMatch(false, 1..1, 1..1),
-                    RangeMatch(true, 2..2, 2..2)
+                    MatchResultsOfSubLists(true, 0..0, 0..0),
+                    MatchResultsOfSubLists(false, 1..1, 1..1),
+                    MatchResultsOfSubLists(true, 2..2, 2..2)
                 )
             )
             actual shouldBe expected
@@ -127,9 +127,9 @@ class ListsTest: StringSpec() {
             val actual = sut.matches(left, right, matcher = Any::equals)
             val expected = listOf(
                 listOf(
-                    RangeMatch(true, 0..0, 0..0),
-                    RangeMatch(false, 1..1, 1..2),
-                    RangeMatch(true, 2..3, 3..4)
+                    MatchResultsOfSubLists(true, 0..0, 0..0),
+                    MatchResultsOfSubLists(false, 1..1, 1..2),
+                    MatchResultsOfSubLists(true, 2..3, 3..4)
                 )
             )
             actual shouldBe expected
@@ -141,9 +141,9 @@ class ListsTest: StringSpec() {
             val actual = sut.matches(right, left, matcher = Any::equals)
             val expected = listOf(
                 listOf(
-                    RangeMatch(true, 0..0, 0..0),
-                    RangeMatch(false, 1..2, 1..1),
-                    RangeMatch(true, 3..4, 2..3)
+                    MatchResultsOfSubLists(true, 0..0, 0..0),
+                    MatchResultsOfSubLists(false, 1..2, 1..1),
+                    MatchResultsOfSubLists(true, 3..4, 2..3)
                 )
             )
             actual shouldBe expected

@@ -1,6 +1,6 @@
 package io.kotest.matchers.collections.detailed
 
-data class RangeMatch(val match: Boolean, val leftRange: ClosedRange<Int>, val rightRange: ClosedRange<Int>){
+data class MatchResultsOfSubLists(val match: Boolean, val leftRange: ClosedRange<Int>, val rightRange: ClosedRange<Int>){
     init{
         require(!match || (leftRange.length() == rightRange.length())){
             "For a match, both ranges must have same length: $this"
@@ -14,16 +14,16 @@ data class RangeMatch(val match: Boolean, val leftRange: ClosedRange<Int>, val r
     }
 
     fun spawnNewRange(itemsMatch: ItemsMatch) =
-            RangeMatch(itemsMatch.match,
+            MatchResultsOfSubLists(itemsMatch.match,
                     leftRange.spawnRangeOnLeft(!itemsMatch.leftItemPresent()),
                     rightRange.spawnRangeOnLeft(!itemsMatch.rightItemPresent())
             )
 
-    fun extendLeftRangeBack() = RangeMatch(match, extendIndexRangeBack(leftRange), rightRange)
+    fun extendLeftRangeBack() = MatchResultsOfSubLists(match, extendIndexRangeBack(leftRange), rightRange)
 
-    fun extendRightRangeBack() = RangeMatch(match, leftRange, extendIndexRangeBack(rightRange))
+    fun extendRightRangeBack() = MatchResultsOfSubLists(match, leftRange, extendIndexRangeBack(rightRange))
 
-    fun extendBothRangesBack() = RangeMatch(match, extendIndexRangeBack(leftRange), extendIndexRangeBack(rightRange))
+    fun extendBothRangesBack() = MatchResultsOfSubLists(match, extendIndexRangeBack(leftRange), extendIndexRangeBack(rightRange))
 
     private fun extendIndexRangeBack(range: ClosedRange<Int>) = range.start - 1 .. range.endInclusive
 
