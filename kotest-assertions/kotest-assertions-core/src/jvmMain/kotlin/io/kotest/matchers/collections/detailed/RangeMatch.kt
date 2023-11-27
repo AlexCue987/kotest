@@ -33,13 +33,6 @@ data class RangeMatch(val match: Boolean, val leftRange: ClosedRange<Int>, val r
     val rightIndexes: List<Int>
         get() = rightRange.toSequence().toList()
 }
-//
-//fun rangeToSequence(range: ClosedRange<Int>): Sequence<Int> = sequence {
-//    var next = range.start
-//    while(next <= range.endInclusive) {
-//        yield(next++)
-//    }
-//}
 
 fun ClosedRange<Int>.toSequence(): Sequence<Int> {
     var next = this.start
@@ -51,15 +44,15 @@ fun ClosedRange<Int>.toSequence(): Sequence<Int> {
     }
 }
 
-enum class MatchType(val leftItemPresent: Boolean, val rightItemPresent: Boolean){
-    LEFT(true, false),
-    RIGHT(false, true),
-    BOTH(true, true)
+enum class MatchResultType(val leftItemPresent: Boolean, val rightItemPresent: Boolean){
+    LEFT_ELEMENT_ONLY(true, false),
+    RIGHT_ELEMENT_ONLY(false, true),
+    BOTH_ELEMENTS_PRESENT(true, true)
 }
 
-data class ItemsMatch(val match: Boolean, val matchType: MatchType) {
+data class ItemsMatch(val match: Boolean, val matchType: MatchResultType) {
     init {
-        require (!match || (matchType == MatchType.BOTH)) {
+        require (!match || (matchType == MatchResultType.BOTH_ELEMENTS_PRESENT)) {
             "Both sides must be present for a match: $this"
         }
     }
@@ -69,10 +62,10 @@ data class ItemsMatch(val match: Boolean, val matchType: MatchType) {
     fun rightItemPresent() = matchType.rightItemPresent
 }
 
-val MATCH = ItemsMatch(true, MatchType.BOTH)
-val MISMATCH = ItemsMatch(false, MatchType.BOTH)
-val LEFT_ITEM_ONLY = ItemsMatch(false, MatchType.LEFT)
-val RIGHT_ITEM_ONLY = ItemsMatch(false, MatchType.RIGHT)
+val MATCH = ItemsMatch(true, MatchResultType.BOTH_ELEMENTS_PRESENT)
+val MISMATCH = ItemsMatch(false, MatchResultType.BOTH_ELEMENTS_PRESENT)
+val LEFT_ITEM_ONLY = ItemsMatch(false, MatchResultType.LEFT_ELEMENT_ONLY)
+val RIGHT_ITEM_ONLY = ItemsMatch(false, MatchResultType.RIGHT_ELEMENT_ONLY)
 
 internal fun ClosedRange<Int>.isNotEmpty() = this.start <= this.endInclusive
 

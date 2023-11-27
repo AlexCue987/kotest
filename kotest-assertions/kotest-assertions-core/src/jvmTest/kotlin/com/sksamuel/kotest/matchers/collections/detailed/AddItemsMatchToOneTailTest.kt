@@ -4,7 +4,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.detailed.ItemsMatch
 import io.kotest.matchers.collections.detailed.ListMatcher
-import io.kotest.matchers.collections.detailed.MatchType
+import io.kotest.matchers.collections.detailed.MatchResultType
 import io.kotest.matchers.collections.detailed.RangeMatch
 import io.kotest.matchers.shouldBe
 
@@ -13,14 +13,14 @@ class AddItemsMatchToOneTailTest: StringSpec() {
 
     init {
         "blowsUpForEmptyTail" {
-            val match = ItemsMatch(true, MatchType.BOTH)
+            val match = ItemsMatch(true, MatchResultType.BOTH_ELEMENTS_PRESENT)
             shouldThrow<IllegalArgumentException> {
                 sut.addItemsMatchToOneTail(match, mutableListOf())
             }
         }
 
         "extendsMatch" {
-            val match = ItemsMatch(true, MatchType.BOTH)
+            val match = ItemsMatch(true, MatchResultType.BOTH_ELEMENTS_PRESENT)
             val lastRangeMatch = RangeMatch(false, 3..4, 4..3)
             val tail = mutableListOf(RangeMatch(true, 1..2, 2..3), lastRangeMatch)
             val actual = sut.addItemsMatchToOneTail(match, tail)
@@ -29,7 +29,7 @@ class AddItemsMatchToOneTailTest: StringSpec() {
         }
 
         "extendsMismatch" {
-            val match = ItemsMatch(false, MatchType.BOTH)
+            val match = ItemsMatch(false, MatchResultType.BOTH_ELEMENTS_PRESENT)
             val lastRangeMatch = RangeMatch(true, 3..4, 4..5)
             val tail = mutableListOf(RangeMatch(false, 1..2, 2..3), lastRangeMatch)
             val actual = sut.addItemsMatchToOneTail(match, tail)
@@ -38,7 +38,7 @@ class AddItemsMatchToOneTailTest: StringSpec() {
         }
 
         "addsMismatchBeforeMatch" {
-            val match = ItemsMatch(false, MatchType.BOTH)
+            val match = ItemsMatch(false, MatchResultType.BOTH_ELEMENTS_PRESENT)
             val lastMatchInTail = RangeMatch(false, 3..4, 4..3)
             val firstMatchInTail = RangeMatch(true, 1..2, 2..3)
             val tail = mutableListOf(firstMatchInTail, lastMatchInTail)
@@ -48,7 +48,7 @@ class AddItemsMatchToOneTailTest: StringSpec() {
         }
 
         "addsMmatchBeforeMismatch" {
-            val match = ItemsMatch(true, MatchType.BOTH)
+            val match = ItemsMatch(true, MatchResultType.BOTH_ELEMENTS_PRESENT)
             val lastMatchInTail = RangeMatch(true, 3..4, 4..5)
             val firstMatchInTail = RangeMatch(false, 1..2, 2..3)
             val tail = mutableListOf(firstMatchInTail, lastMatchInTail)

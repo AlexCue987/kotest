@@ -2,7 +2,6 @@ package io.kotest.matchers.collections.detailed
 
 import io.kotest.matchers.collections.detailed.distance.possibleMatchDescription
 
-
 fun<T> matchLists(expected: List<T>,
                      actual: List<T>,
                      matcher: (left: T, right: T) -> Boolean = {left, right -> left == right}
@@ -49,7 +48,9 @@ data class TailOfList<T>(val items: List<T>, val offset: Int = 0){
     fun currentElement(): T = if(isOver()) throw IllegalStateException("IsOver, no current item") else items[offset]
 }
 
-enum class BranchDirection{ALL, LEFT, MIDDLE, RIGHT}
+enum class BranchDirection { CHANGE_LEFT_TAIL, CHANGE_BOTH_TAILS, CHANGE_RIGHT_TAIL }
+
+private val BRANCH_IN_ALL_DIRECTIONS = BranchDirection.values().toSet()
 
 class ListMatcher {
     fun <T> match(expected: List<T>,
@@ -61,7 +62,7 @@ class ListMatcher {
 
     fun <T> matches(expected: TailOfList<T>,
                     actual: TailOfList<T>,
-                    branchDirection: BranchDirection = BranchDirection.ALL,
+                    branchDirections: Set<BranchDirection> = BRANCH_IN_ALL_DIRECTIONS,
                     matcher: (left: T, right: T) -> Boolean):
             List<List<RangeMatch>> {
         return when {
@@ -74,23 +75,19 @@ class ListMatcher {
             matcher(expected.currentElement(), actual.currentElement()) ->
                 matchCurrentItemsAndCompareTails(MATCH, expected, actual, matcher = matcher)
 
-            else -> branchOnMismatch(expected, actual, branchDirection, matcher = matcher)
+            else -> branchOnMismatch(expected, actual, branchDirections, matcher = matcher)
         }
     }
 
-    private val branchLeftOn = listOf(BranchDirection.ALL, BranchDirection.LEFT)
-
-    private val branchRightOn = listOf(BranchDirection.ALL, BranchDirection.RIGHT)
-
     private fun <T> branchOnMismatch(expected: TailOfList<T>, actual: TailOfList<T>,
-                                     branchDirection: BranchDirection,
+                                     branchDirections: Set<BranchDirection>,
                                      matcher: (left: T, right: T) -> Boolean): List<List<RangeMatch>> {
         val allTails: MutableList<List<RangeMatch>> = mutableListOf()
-        if(branchDirection in branchLeftOn) {
+        if(BranchDirection.CHANGE_LEFT_TAIL in branchDirections) {
             allTails.addAll(nextOnLeftAndCompareTails(expected, actual, matcher = matcher))
         }
         allTails.addAll(matchCurrentItemsAndCompareTails(MISMATCH, expected, actual, matcher = matcher))
-        if(branchDirection in branchRightOn) {
+        if(BranchDirection.CHANGE_RIGHT_TAIL in branchDirections) {
             allTails.addAll(nextOnRightAndCompareTails(expected, actual, matcher = matcher))
         }
         return bestTwoMatches(allTails)
@@ -100,22 +97,22 @@ class ListMatcher {
                                                      expected: TailOfList<T>,
                                                      actual: TailOfList<T>,
                                                      matcher: (left: T, right: T) -> Boolean): List<List<RangeMatch>> {
-        val branchType = if(itemsMatch.match) BranchDirection.ALL else BranchDirection.MIDDLE
-        val matchesForTail = matches(expected.tail(), actual.tail(), branchType, matcher = matcher)
+        val branchDirections = if(itemsMatch.match) BRANCH_IN_ALL_DIRECTIONS else setOf(BranchDirection.CHANGE_BOTH_TAILS)
+        val matchesForTail = matches(expected.tail(), actual.tail(), branchDirections, matcher = matcher)
         return addItemsMatchToMatchesForTail(itemsMatch, matchesForTail)
     }
 
     private fun <T> nextOnLeftAndCompareTails(expected: TailOfList<T>,
                                               actual: TailOfList<T>,
                                               matcher: (left: T, right: T) -> Boolean): List<List<RangeMatch>> {
-        val matchesForTail = matches(expected.tail(), actual, BranchDirection.LEFT, matcher = matcher)
+        val matchesForTail = matches(expected.tail(), actual, setOf(BranchDirection.CHANGE_LEFT_TAIL), matcher = matcher)
         return addItemsMatchToMatchesForTail(LEFT_ITEM_ONLY, matchesForTail)
     }
 
     private fun <T> nextOnRightAndCompareTails(expected: TailOfList<T>,
                                                actual: TailOfList<T>,
                                                matcher: (left: T, right: T) -> Boolean): List<List<RangeMatch>> {
-        val matchesForTail = matches(expected, actual.tail(), BranchDirection.RIGHT, matcher = matcher)
+        val matchesForTail = matches(expected, actual.tail(), setOf(BranchDirection.CHANGE_RIGHT_TAIL), matcher = matcher)
         return addItemsMatchToMatchesForTail(RIGHT_ITEM_ONLY, matchesForTail)
     }
 
@@ -137,9 +134,9 @@ class ListMatcher {
         return when{
             matchesForTail[0].match == itemsMatch.match -> {
                 val extendedFirstRange = when(itemsMatch.matchType){
-                    MatchType.LEFT -> matchesForTail[0].extendLeftRangeBack()
-                    MatchType.RIGHT -> matchesForTail[0].extendRightRangeBack()
-                    MatchType.BOTH -> matchesForTail[0].extendBothRangesBack()
+                    MatchResultType.LEFT_ELEMENT_ONLY -> matchesForTail[0].extendLeftRangeBack()
+                    MatchResultType.RIGHT_ELEMENT_ONLY -> matchesForTail[0].extendRightRangeBack()
+                    MatchResultType.BOTH_ELEMENTS_PRESENT -> matchesForTail[0].extendBothRangesBack()
                 }
                 listOf(extendedFirstRange, *matchesForTail.drop(1).toTypedArray())
             }

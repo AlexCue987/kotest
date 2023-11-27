@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.detailed.ItemsMatch
-import io.kotest.matchers.collections.detailed.MatchType
+import io.kotest.matchers.collections.detailed.MatchResultType
 import io.kotest.matchers.collections.detailed.RangeMatch
 
 class RangeMatchTest: StringSpec() {
@@ -32,28 +32,28 @@ class RangeMatchTest: StringSpec() {
 
       "spawnNewRange_mismatchLEFT" {
          val sut = RangeMatch(true, 1..2, 2..3)
-         val actual = sut.spawnNewRange(ItemsMatch(false, MatchType.LEFT))
+         val actual = sut.spawnNewRange(ItemsMatch(false, MatchResultType.LEFT_ELEMENT_ONLY))
          val expected = RangeMatch(false, 0..0, 1..0)
          actual shouldBe expected
       }
 
       "spawnNewRange_mismatchRIGHT" {
          val sut = RangeMatch(true, 1..2, 2..3)
-         val actual = sut.spawnNewRange(ItemsMatch(false, MatchType.RIGHT))
+         val actual = sut.spawnNewRange(ItemsMatch(false, MatchResultType.RIGHT_ELEMENT_ONLY))
          val expected = RangeMatch(false, 0..-1, 1..1)
          actual shouldBe expected
       }
 
       "spawnNewRange_mismatchBOTH" {
          val sut = RangeMatch(true, 1..2, 2..3)
-         val actual = sut.spawnNewRange(ItemsMatch(false, MatchType.BOTH))
+         val actual = sut.spawnNewRange(ItemsMatch(false, MatchResultType.BOTH_ELEMENTS_PRESENT))
          val expected = RangeMatch(false, 0..0, 1..1)
          actual shouldBe expected
       }
 
       "spawnNewRange_matchBOTH" {
          val sut = RangeMatch(false, 1..2, 2..3)
-         val actual = sut.spawnNewRange(ItemsMatch(true, MatchType.BOTH))
+         val actual = sut.spawnNewRange(ItemsMatch(true, MatchResultType.BOTH_ELEMENTS_PRESENT))
          val expected = RangeMatch(true, 0..0, 1..1)
          actual shouldBe expected
       }
