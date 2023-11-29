@@ -2,7 +2,8 @@ package com.sksamuel.kotest.matchers.collections.detailed
 
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.collections.detailed.matchLists
+import io.kotest.matchers.collections.detailed.matchList
+import io.kotest.matchers.collections.detailed.shouldMatchList
 import io.kotest.matchers.shouldBe
 
 class ListsOfElementsWithMultipleFieldsTest: StringSpec() {
@@ -11,7 +12,7 @@ class ListsOfElementsWithMultipleFieldsTest: StringSpec() {
            val expected = listOf(sweetGreenApple, sweetRedApple, sweetGreenPear)
            val actual = listOf(sweetGreenPear, sweetGreenApple, sweetRedApple)
            shouldThrowAny {
-              matchLists(expected, actual)
+              actual shouldMatchList expected
            }.message shouldBe """
 Mismatch:
 actual[0] = Fruit(name=pear, color=green, taste=sweet)
@@ -31,7 +32,7 @@ actual[0] == expected[2], is: Fruit(name=pear, color=green, taste=sweet)"""
             val expected = listOf(sweetGreenApple, sweetRedApple, sweetGreenPear)
             val actual = listOf(sweetGreenPear.copy(name = "onion"), sweetGreenApple, sweetRedApple)
             shouldThrowAny {
-                matchLists(expected, actual)
+                actual shouldMatchList expected
             }.message shouldBe """
 
                Mismatch:
@@ -67,7 +68,7 @@ actual[0] == expected[2], is: Fruit(name=pear, color=green, taste=sweet)"""
             val expected = listOf(sweetGreenApple)
             val actual = listOf(sweetRedApple)
             shouldThrowAny {
-                matchLists(expected, actual)
+                actual shouldMatchList expected
             }.message shouldBe """
 
                Mismatch:
@@ -89,7 +90,7 @@ actual[0] == expected[2], is: Fruit(name=pear, color=green, taste=sweet)"""
             val expected = listOf(sweetGreenApple, sweetRedApple, sweetGreenPear)
             val actual = listOf(sourYellowLemon, sweetGreenApple, sweetRedApple)
             shouldThrowAny {
-                matchLists(expected, actual)
+                actual shouldMatchList expected
              }.message shouldBe """
 
                 Mismatch:

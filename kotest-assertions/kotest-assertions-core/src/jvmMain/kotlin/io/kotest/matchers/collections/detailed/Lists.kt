@@ -1,16 +1,36 @@
 package io.kotest.matchers.collections.detailed
 
+import io.kotest.matchers.Matcher
+import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.collections.detailed.distance.possibleMatchDescription
+import io.kotest.matchers.should
 
-fun <T : Any> matchLists(expected: List<T>,
-                     actual: List<T>,
-                     matcher: (left: T, right: T) -> Boolean = {left, right -> left == right}
-) {
-    val assertionResult = compareLists(expected, actual, matcher)
-    assertionResult.assertSuccess()
+infix fun <T : Any> List<T>.shouldMatchList(other: List<T>) = this should matchList(other)
+
+fun <T : Any> List<T>.shouldMatchList(other: List<T>,
+                                      matcher: (left: T, right: T) -> Boolean = {left, right -> left == right}
+) = this should matchList(other, matcher)
+
+/**
+ * @param other list that needs to be compared against
+ * @param matcher optional custom lambda to compare elements, defaults to Any.equals
+ */
+fun <T : Any> List<T>.matchList(
+   other: List<T>,
+   matcher: (left: T, right: T) -> Boolean = {left, right -> left == right}
+): Matcher<List<T>> = object :
+   Matcher<List<T>> {
+   override fun test(value: List<T>): MatcherResult {
+      val assertionResult = compareLists(expected = other, actual = value, matcher = matcher)
+      return MatcherResult(
+         assertionResult.success,
+         { assertionResult.message },
+         { "Lists should not be equal, but were: ${other.joinToString("\n") { it.toString() }}" }
+      )
+   }
 }
 
-fun <T : Any> compareLists(expected: List<T>, actual: List<T>,
+internal fun <T : Any> compareLists(expected: List<T>, actual: List<T>,
                      matcher: (left: T, right: T) -> Boolean = {left, right -> left == right}
 ): AssertionResult {
     val listMatcher = ListMatcher()
@@ -148,10 +168,4 @@ class ListMatcher {
     }
 }
 
-data class AssertionResult(val success: Boolean, val message: String = ""){
-   fun assertSuccess(){
-      if (!success) {
-         throw AssertionError(message)
-      }
-   }
-}
+internal data class AssertionResult(val success: Boolean, val message: String = "")

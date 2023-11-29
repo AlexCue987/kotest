@@ -2,7 +2,7 @@ package com.sksamuel.kotest.matchers.collections.detailed
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.collections.detailed.matchLists
+import io.kotest.matchers.collections.detailed.shouldMatchList
 import io.kotest.matchers.shouldBe
 import kotlin.text.lowercase
 
@@ -13,15 +13,15 @@ class ListWithCustomMatcherTest: StringSpec() {
     init {
         "matchesStringsWithCustomMatcher" {
             shouldThrow<AssertionError> {
-                matchLists(crew, sameCrewInLowerCase)
+               sameCrewInLowerCase shouldMatchList crew
             }
-            matchLists(crew, sameCrewInLowerCase) { a: String, b: String -> a.lowercase() == b.lowercase() }
+           sameCrewInLowerCase.shouldMatchList(crew) { a: String, b: String -> a.lowercase() == b.lowercase() }
         }
 
         "findsMismatchesInStringsWithCustomMatcher" {
             val anotherCrew = listOf("Yoda", "Chewbacca", "Leia")
             val thrown = shouldThrow<AssertionError> {
-                matchLists(crew, anotherCrew) { a: String, b: String -> a.lowercase() == b.lowercase() }
+               anotherCrew.shouldMatchList(crew) { a: String, b: String -> a.lowercase() == b.lowercase() }
             }
             thrown.message shouldBe """
 Match:
@@ -38,16 +38,16 @@ actual[2] = Leia
             val expected = listOf(1.0, 2.0)
             val actual = listOf(0.91, 2.09)
             shouldThrow<AssertionError> {
-                matchLists(expected, actual)
+               actual shouldMatchList expected
             }
-            matchLists(expected, actual) { a, b -> b in (a - 0.1)..(a + 0.1) }
+           actual.shouldMatchList(expected) { a, b -> b in (a - 0.1)..(a + 0.1) }
         }
 
         "findsMismatchesInDoublesWithTolerance" {
             val expected = listOf(1.0, 2.0)
             val actual = listOf(0.949, 2.51)
             val thrown = shouldThrow<AssertionError> {
-                matchLists(expected, actual) { a, b -> b in (a - 0.05)..(a + 0.05) }
+               actual.shouldMatchList(expected) { a, b -> b in (a - 0.05)..(a + 0.05) }
             }
             thrown.message shouldBe """
 Mismatch:
