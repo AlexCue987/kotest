@@ -1,9 +1,14 @@
 package com.sksamuel.kotest.matchers.date
 
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.date.LocalTimeToleranceMatcher
+import io.kotest.matchers.date.and
 import io.kotest.matchers.shouldBe
 import java.time.LocalTime
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 class LocalTimeToleranceMatcherTest: WordSpec() {
    private val oneAm = LocalTime.of(1, 0, 0)
@@ -26,6 +31,20 @@ class LocalTimeToleranceMatcherTest: WordSpec() {
 
          "works when interval is spans two days" {
             LocalTimeToleranceMatcher.rangeDescription(sixPm, oneAm) shouldBe "between 18:00 and 01:00 next day"
+         }
+      }
+
+      "validateTolerance" should {
+          "pass when less than 12 hours" {
+             shouldNotThrowAny {
+                LocalTimeToleranceMatcher.validateTolerance(11.hours and 59.minutes)
+             }
+          }
+
+         "pass when 12 hours" {
+            shouldThrowAny {
+               LocalTimeToleranceMatcher.validateTolerance(12.hours)
+            }
          }
       }
    }
