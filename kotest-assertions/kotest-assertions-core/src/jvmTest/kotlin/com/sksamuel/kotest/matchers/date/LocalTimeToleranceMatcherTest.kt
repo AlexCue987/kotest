@@ -12,6 +12,7 @@ import kotlin.time.Duration.Companion.minutes
 
 class LocalTimeToleranceMatcherTest: WordSpec() {
    private val oneAm = LocalTime.of(1, 0, 0)
+   private val onePm = LocalTime.of(13, 0, 0)
    private val sixPm = LocalTime.of(18, 0, 0)
    init {
       "should" should {
