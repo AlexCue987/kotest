@@ -791,6 +791,14 @@ public final class io/kotest/matchers/collections/UniqueKt {
 	public static final fun shouldNotBeUnique ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
+public final class io/kotest/matchers/collections/detailed/ListsKt {
+	public static final fun matchList (Ljava/util/List;Ljava/util/List;Lkotlin/jvm/functions/Function2;)Lio/kotest/matchers/Matcher;
+	public static synthetic fun matchList$default (Ljava/util/List;Ljava/util/List;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lio/kotest/matchers/Matcher;
+	public static final fun shouldMatchList (Ljava/util/List;Ljava/util/List;)V
+	public static final fun shouldMatchList (Ljava/util/List;Ljava/util/List;Lkotlin/jvm/functions/Function2;)V
+	public static synthetic fun shouldMatchList$default (Ljava/util/List;Ljava/util/List;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
+}
+
 public final class io/kotest/matchers/comparables/ComparableMatchersKt {
 	public static final fun beEqualComparingTo (Ljava/lang/Comparable;)Lio/kotest/matchers/Matcher;
 	public static final fun beGreaterThan (Ljava/lang/Comparable;)Lio/kotest/matchers/Matcher;
