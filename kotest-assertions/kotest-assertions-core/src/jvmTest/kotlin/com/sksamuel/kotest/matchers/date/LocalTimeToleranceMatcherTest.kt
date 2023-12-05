@@ -5,6 +5,7 @@ import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.date.LocalTimeToleranceMatcher
 import io.kotest.matchers.date.and
+import io.kotest.matchers.date.plusOrMinus
 import io.kotest.matchers.shouldBe
 import java.time.LocalTime
 import kotlin.time.Duration.Companion.hours
@@ -16,12 +17,35 @@ class LocalTimeToleranceMatcherTest: WordSpec() {
    private val sixPm = LocalTime.of(18, 0, 0)
    init {
       "should" should {
-         "wrap around midnight forward" {
-            LocalTime.of(23, 55, 0).plusMinutes(10) shouldBe LocalTime.of(0, 5, 0)
+         "pass when the whole range is inside one calendar day" {
+             onePm shouldBe (LocalTime.of(13, 1, 0) plusOrMinus 2.minutes)
+             onePm shouldBe (LocalTime.of(12, 59, 0) plusOrMinus 2.minutes)
          }
 
-         "wrap around midnight backward" {
-            LocalTime.of(0, 5, 0).minusMinutes(10) shouldBe LocalTime.of(23, 55, 0)
+         "fail when the whole range is inside one calendar day" {
+            shouldThrowAny {
+               onePm shouldBe (LocalTime.of(13, 3, 0) plusOrMinus 2.minutes)
+            }.message shouldBe "13:00 should be equal to 13:03 with tolerance 2m (between 13:01 and 13:05)"
+            shouldThrowAny {
+               onePm shouldBe (LocalTime.of(12, 57, 0) plusOrMinus 2.minutes)
+            }.message shouldBe "13:00 should be equal to 12:57 with tolerance 2m (between 12:55 and 12:59)"
+         }
+
+         "pass when the range includes midnight" {
+            val oneMinuteAfterMidnight = LocalTime.of(0, 1, 0)
+            LocalTime.of(23, 59) shouldBe (oneMinuteAfterMidnight plusOrMinus 2.minutes)
+            LocalTime.of(0, 0) shouldBe (oneMinuteAfterMidnight plusOrMinus 2.minutes)
+            LocalTime.of(0, 2) shouldBe (oneMinuteAfterMidnight plusOrMinus 2.minutes)
+         }
+
+         "fail when the range includes midnight" {
+            val oneMinuteAfterMidnight = LocalTime.of(0, 1, 0)
+            shouldThrowAny {
+               LocalTime.of(23, 58) shouldBe (oneMinuteAfterMidnight plusOrMinus 2.minutes)
+            }.message shouldBe "23:58 should be equal to 00:01 with tolerance 2m (between 23:59 and 00:03 next day)"
+            shouldThrowAny {
+               LocalTime.of(0, 4) shouldBe (oneMinuteAfterMidnight plusOrMinus 2.minutes)
+            }.message shouldBe "00:04 should be equal to 00:01 with tolerance 2m (between 23:59 and 00:03 next day)"
          }
       }
 
@@ -42,7 +66,7 @@ class LocalTimeToleranceMatcherTest: WordSpec() {
              }
           }
 
-         "pass when 12 hours" {
+         "fail when 12 hours" {
             shouldThrowAny {
                LocalTimeToleranceMatcher.validateTolerance(12.hours)
             }

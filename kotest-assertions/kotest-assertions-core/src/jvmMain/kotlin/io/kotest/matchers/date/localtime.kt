@@ -564,9 +564,6 @@ fun between(a: LocalTime, b: LocalTime): Matcher<LocalTime> = object : Matcher<L
   }
 }
 
-infix fun LocalTime.plusOrMinus(tolerance: Duration): LocalTimeToleranceMatcher =
-   LocalTimeToleranceMatcher(this, tolerance)
-
 /**
  * Matcher that checks if LocalTime is within tolerance of another LocalTime
  *
@@ -591,6 +588,9 @@ infix fun LocalTime.plusOrMinus(tolerance: Duration): LocalTimeToleranceMatcher 
  * @see LocalTime.shouldBeBetween
  * @see LocalTime.shouldNotBeBetween
  */
+infix fun LocalTime.plusOrMinus(tolerance: Duration): LocalTimeToleranceMatcher =
+   LocalTimeToleranceMatcher(this, tolerance)
+
 class LocalTimeToleranceMatcher(
    private val expected: LocalTime,
    private val tolerance: Duration
@@ -604,7 +604,7 @@ class LocalTimeToleranceMatcher(
       val lowerBound = expected.minusNanos(positiveTolerance.inWholeNanoseconds)
       val upperBound = expected.plusNanos(positiveTolerance.inWholeNanoseconds)
       val spansTwoDays = upperBound < lowerBound
-      val insideToleranceInterval = if(spansTwoDays) (upperBound <= value) && (value <= lowerBound)
+      val insideToleranceInterval = if(spansTwoDays) (lowerBound <= value) || (value <= upperBound)
          else (lowerBound <= value) && (value <= upperBound)
       return MatcherResult(
          insideToleranceInterval,
