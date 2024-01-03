@@ -30,6 +30,16 @@ data class Range<T: Comparable<T>>(
 
    fun greaterThan(other: Range<T>) = other.lessThan(this)
 
+   fun contains(edge: RangeEdge<T>) = when {
+      edge.value < this.start.value -> false
+      edge.value == this.start.value ->
+         this.start.edgeType == RangeEdgeType.INCLUSIVE || edge.edgeType == RangeEdgeType.EXCLUSIVE
+      this.start.value < edge.value && edge.value < this.end.value -> true
+      edge.value == this.end.value ->
+         this.end.edgeType == RangeEdgeType.INCLUSIVE || edge.edgeType == RangeEdgeType.EXCLUSIVE
+      else -> false
+   }
+
    companion object {
       fun<T: Comparable<T>> of(range: ClosedRange<T>) = Range(
           start = RangeEdge(range.start, RangeEdgeType.INCLUSIVE),
@@ -61,7 +71,6 @@ data class Range<T: Comparable<T>>(
           start = RangeEdge(start, RangeEdgeType.INCLUSIVE),
           end = RangeEdge(end, RangeEdgeType.INCLUSIVE)
       )
-
    }
 }
 
