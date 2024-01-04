@@ -11,8 +11,13 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.ranges.Range
 import io.kotest.matchers.ranges.RangeEdge
 import io.kotest.matchers.ranges.RangeEdgeType
+import io.kotest.matchers.ranges.toClosedClosedRange
+import io.kotest.matchers.ranges.toClosedOpenRange
 import io.kotest.matchers.shouldBe
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.int
 
+@OptIn(ExperimentalStdlibApi::class)
 class RangeTest: WordSpec() {
    private val openOpenRange = Range.openOpen(1, 2)
    private val openClosedRange = Range.openClosed(2, 3)
@@ -86,7 +91,7 @@ class RangeTest: WordSpec() {
          }
       }
 
-      "contains" should {
+      "contains for edge" should {
          "false if edge before start" {
             openOpenRange.contains(openOpenRange.start.copy(value = openOpenRange.start.value - 1)).shouldBeFalse()
          }
@@ -129,6 +134,56 @@ class RangeTest: WordSpec() {
 
          "false if edge after end" {
             openOpenRange.contains(openOpenRange.end.copy(value = openOpenRange.end.value + 1)).shouldBeFalse()
+         }
+      }
+
+      "contains for range" should {
+         "work for two closed ranges" {
+            io.kotest.property.forAll(
+               Arb.int(1..4), Arb.int(1..3), Arb.int(0..5), Arb.int(0..2)
+            ) { rangeStart, rangeLength, otherStart, otherLength ->
+               val rangeEnd = rangeStart + rangeLength
+               val otherEnd = otherStart + otherLength
+               (rangeStart..rangeEnd).toClosedClosedRange().contains(
+                  (otherStart..otherEnd).toClosedClosedRange()
+               ) == ((rangeStart <= otherStart) && (otherEnd <= rangeEnd))
+            }
+         }
+
+         "work for closed range inside closed open one" {
+            io.kotest.property.forAll(
+               Arb.int(1..4), Arb.int(1..3), Arb.int(0..5), Arb.int(0..2)
+            ) { rangeStart, rangeLength, otherStart, otherLength ->
+               val rangeEnd = rangeStart + rangeLength
+               val otherEnd = otherStart + otherLength
+               (rangeStart..<rangeEnd).toClosedOpenRange().contains(
+                  (otherStart..otherEnd).toClosedClosedRange()
+               ) == ((rangeStart <= otherStart) && (otherEnd < rangeEnd))
+            }
+         }
+
+         "work for closed open range inside closed one" {
+            io.kotest.property.forAll(
+               Arb.int(1..4), Arb.int(1..3), Arb.int(0..5), Arb.int(1..3)
+            ) { rangeStart, rangeLength, otherStart, otherLength ->
+               val rangeEnd = rangeStart + rangeLength
+               val otherEnd = otherStart + otherLength
+               (rangeStart..rangeEnd).toClosedClosedRange().contains(
+                  (otherStart..<otherEnd).toClosedOpenRange()
+               ) == ((rangeStart <= otherStart) && (otherEnd <= rangeEnd))
+            }
+         }
+
+         "work for closed open range inside closed open one" {
+            io.kotest.property.forAll(
+               Arb.int(1..4), Arb.int(1..3), Arb.int(0..5), Arb.int(1..3)
+            ) { rangeStart, rangeLength, otherStart, otherLength ->
+               val rangeEnd = rangeStart + rangeLength
+               val otherEnd = otherStart + otherLength
+               (rangeStart..<rangeEnd).toClosedOpenRange().contains(
+                  (otherStart..<otherEnd).toClosedOpenRange()
+               ) == ((rangeStart <= otherStart) && (otherEnd <= rangeEnd))
+            }
          }
       }
    }

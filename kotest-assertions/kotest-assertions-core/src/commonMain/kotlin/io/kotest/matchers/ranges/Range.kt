@@ -30,6 +30,8 @@ data class Range<T: Comparable<T>>(
 
    fun greaterThan(other: Range<T>) = other.lessThan(this)
 
+   fun contains(other: Range<T>) = contains(other.start) && contains(other.end)
+
    fun contains(edge: RangeEdge<T>) = when {
       edge.value < this.start.value -> false
       edge.value == this.start.value ->
@@ -73,6 +75,17 @@ data class Range<T: Comparable<T>>(
       )
    }
 }
+
+internal fun<T: Comparable<T>> ClosedRange<T>.toClosedClosedRange(): Range<T> = Range(
+   start = RangeEdge(this.start, RangeEdgeType.INCLUSIVE),
+   end = RangeEdge(this.endInclusive, RangeEdgeType.INCLUSIVE)
+)
+
+@OptIn(ExperimentalStdlibApi::class)
+internal fun<T: Comparable<T>> OpenEndRange<T>.toClosedOpenRange(): Range<T> = Range(
+   start = RangeEdge(this.start, RangeEdgeType.INCLUSIVE),
+   end = RangeEdge(this.endExclusive, RangeEdgeType.EXCLUSIVE)
+)
 
 enum class RangeEdgeType { INCLUSIVE, EXCLUSIVE }
 
