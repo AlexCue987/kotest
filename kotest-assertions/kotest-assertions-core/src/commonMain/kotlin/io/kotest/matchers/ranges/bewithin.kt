@@ -31,11 +31,11 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: ClosedRange<T>
  * @see [shouldbeWithin]
  * @see [beWithin]
  */
-//@OptIn(ExperimentalStdlibApi::class)
-//infix fun <T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
-//   Range.of(this) should beWithin(Range.of(range))
-//   return this
-//}
+@OptIn(ExperimentalStdlibApi::class)
+infix fun <T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
+   Range.of(this) should beWithin(Range.of(range))
+   return this
+}
 
 /**
  * Verifies that this [ClosedRange] beWithins with an [OpenEndRange].
@@ -45,11 +45,11 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: ClosedRange<T>
  * @see [shouldbeWithin]
  * @see [beWithin]
  */
-//@OptIn(ExperimentalStdlibApi::class)
-//infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: OpenEndRange<T>): ClosedRange<T> {
-//   Range.of(this) should beWithin(Range.of(range))
-//   return this
-//}
+@OptIn(ExperimentalStdlibApi::class)
+infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: OpenEndRange<T>): ClosedRange<T> {
+   Range.of(this) should beWithin(Range.of(range))
+   return this
+}
 
 /**
  * Verifies that this [OpenEndRange] beWithins with another [OpenEndRange].
@@ -59,11 +59,11 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: ClosedRange<T>
  * @see [shouldbeWithin]
  * @see [beWithin]
  */
-//@OptIn(ExperimentalStdlibApi::class)
-//infix fun <T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: OpenEndRange<T>): OpenEndRange<T> {
-//   Range.of(this) should beWithin(Range.of(range))
-//   return this
-//}
+@OptIn(ExperimentalStdlibApi::class)
+infix fun <T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: OpenEndRange<T>): OpenEndRange<T> {
+   Range.of(this) should beWithin(Range.of(range))
+   return this
+}
 
 /**
  * Verifies that this [ClosedRange] does not beWithin with another [ClosedRange].
@@ -140,7 +140,7 @@ fun <T: Comparable<T>> beWithin(range: Range<T>) = object : Matcher<Range<T>> {
 
       return MatcherResult(
          match,
-         { "Range ${value.print().value} should be within ${range.print().value}, but is isn't" },
+         { "Range ${value.print().value} should be within ${range.print().value}, but it isn't" },
          { "Range ${value.print().value} should not be within ${range.print().value}, but it is" }
       )
    }
