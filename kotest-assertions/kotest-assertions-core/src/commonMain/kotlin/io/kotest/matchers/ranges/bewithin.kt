@@ -7,13 +7,13 @@ import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
 
 /**
- * Verifies that this [ClosedRange] beWithins with another [ClosedRange].
+ * Verifies that this [ClosedRange] beWithin with another [ClosedRange].
  *
- * Assertion to check that this [ClosedRange] beWithins with another [ClosedRange].
+ * Assertion to check that this [ClosedRange] beWithin with another [ClosedRange].
  *
  * An empty range will always fail. If you need to check for empty range, use [ClosedRange.shouldBeEmpty]
  *
- * @see [shouldbeWithin]
+ * @see [shouldBeWithin]
  * @see [beWithin]
  */
 infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: ClosedRange<T>): ClosedRange<T> {
@@ -31,11 +31,11 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: ClosedRange<T>
  * @see [shouldbeWithin]
  * @see [beWithin]
  */
-@OptIn(ExperimentalStdlibApi::class)
-infix fun <T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
-   Range.of(this) should beWithin(Range.of(range))
-   return this
-}
+//@OptIn(ExperimentalStdlibApi::class)
+//infix fun <T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
+//   Range.of(this) should beWithin(Range.of(range))
+//   return this
+//}
 
 /**
  * Verifies that this [ClosedRange] beWithins with an [OpenEndRange].
@@ -45,11 +45,11 @@ infix fun <T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T
  * @see [shouldbeWithin]
  * @see [beWithin]
  */
-@OptIn(ExperimentalStdlibApi::class)
-infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: OpenEndRange<T>): ClosedRange<T> {
-   Range.of(this) should beWithin(Range.of(range))
-   return this
-}
+//@OptIn(ExperimentalStdlibApi::class)
+//infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: OpenEndRange<T>): ClosedRange<T> {
+//   Range.of(this) should beWithin(Range.of(range))
+//   return this
+//}
 
 /**
  * Verifies that this [OpenEndRange] beWithins with another [OpenEndRange].
@@ -59,11 +59,11 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: OpenEndRange<T
  * @see [shouldbeWithin]
  * @see [beWithin]
  */
-@OptIn(ExperimentalStdlibApi::class)
-infix fun <T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: OpenEndRange<T>): OpenEndRange<T> {
-   Range.of(this) should beWithin(Range.of(range))
-   return this
-}
+//@OptIn(ExperimentalStdlibApi::class)
+//infix fun <T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: OpenEndRange<T>): OpenEndRange<T> {
+//   Range.of(this) should beWithin(Range.of(range))
+//   return this
+//}
 
 /**
  * Verifies that this [ClosedRange] does not beWithin with another [ClosedRange].
@@ -136,7 +136,7 @@ fun <T: Comparable<T>> beWithin(range: Range<T>) = object : Matcher<Range<T>> {
    override fun test(value: Range<T>): MatcherResult {
       if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
 
-      val match = range.contains(value.start) && range.contains(value.end)
+      val match = range.contains(value)
 
       return MatcherResult(
          match,
