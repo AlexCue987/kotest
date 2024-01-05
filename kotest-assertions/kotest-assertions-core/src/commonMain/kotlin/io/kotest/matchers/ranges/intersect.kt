@@ -136,7 +136,7 @@ fun <T: Comparable<T>> intersect(range: Range<T>) = object : Matcher<Range<T>> {
    override fun test(value: Range<T>): MatcherResult {
       if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
 
-      val match = !range.lessThan(value) && !value.lessThan(range)
+      val match = range.intersect(value)
 
       return MatcherResult(
          match,
