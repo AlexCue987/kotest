@@ -14,6 +14,7 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.int
 import io.kotest.property.forAll
 
+@OptIn(ExperimentalStdlibApi::class)
 class RangeTest: WordSpec() {
    private val openOpenRange = Range.openOpen(1, 2)
    private val openClosedRange = Range.openClosed(2, 3)
@@ -95,6 +96,16 @@ class RangeTest: WordSpec() {
                val range = rangeStart..(rangeStart + rangeLength)
                val other = otherStart..(otherStart + otherLength)
                Range.ofClosedRange(range).intersect(Range.ofClosedRange(other)) == range.toSet().intersect(other.toSet()).isNotEmpty()
+            }
+         }
+
+         "work for two open end ranges" {
+            forAll(
+               Arb.int(1..3), Arb.int(1..3), Arb.int(0..4), Arb.int(1..2)
+            ) { rangeStart, rangeLength, otherStart, otherLength ->
+               val range = rangeStart..<(rangeStart + rangeLength)
+               val other = otherStart..<(otherStart + otherLength)
+               Range.ofOpenEndRange(range).intersect(Range.ofOpenEndRange(other)) == range.toSet().intersect(other.toSet()).isNotEmpty()
             }
          }
       }
