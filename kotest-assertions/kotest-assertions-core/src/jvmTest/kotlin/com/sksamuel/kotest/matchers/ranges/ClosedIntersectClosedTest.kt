@@ -6,6 +6,9 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.ranges.shouldIntersect
 import io.kotest.matchers.ranges.shouldNotIntersect
 import io.kotest.matchers.shouldBe
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.int
+import io.kotest.property.forAll
 
 class ClosedIntersectClosedTest: WordSpec() {
    private val oneThree: ClosedRange<Int> = (1..3)
@@ -15,6 +18,17 @@ class ClosedIntersectClosedTest: WordSpec() {
    private val fourSix: ClosedRange<Int> = (4..6)
    init {
       "should" should {
+//         "work" {
+//            forAll(
+//               Arb.int(1..5), Arb.int(1..2), Arb.int(0..6), Arb.int(1..2)
+//            ) { rangeStart, rangeLength, otherStart, otherLength ->
+//               val rangeEnd = rangeStart + rangeLength
+//               val otherEnd = otherStart + otherLength
+//               (rangeStart..rangeEnd).toClosedOpenRange().contains(
+//                  (otherStart..otherEnd).toClosedClosedRange()
+//               ) == ((rangeStart <= otherStart) && (otherEnd < rangeEnd))
+//            }
+//         }
          "fail if left below right" {
              shouldThrowAny {
                 oneThree shouldIntersect fourSix
