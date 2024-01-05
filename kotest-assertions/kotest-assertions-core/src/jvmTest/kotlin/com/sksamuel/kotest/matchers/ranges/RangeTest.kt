@@ -108,6 +108,18 @@ class RangeTest: WordSpec() {
                Range.ofOpenEndRange(range).intersect(Range.ofOpenEndRange(other)) == range.toSet().intersect(other.toSet()).isNotEmpty()
             }
          }
+
+         "work for closed range and open end one" {
+            forAll(
+               Arb.int(1..3), Arb.int(1..3), Arb.int(0..4), Arb.int(1..2)
+            ) { rangeStart, rangeLength, otherStart, otherLength ->
+               val range = rangeStart..(rangeStart + rangeLength)
+               val other = otherStart..<(otherStart + otherLength)
+               (Range.ofClosedRange(range).intersect(Range.ofOpenEndRange(other)) == range.toSet().intersect(other.toSet()).isNotEmpty())
+                  &&
+                  (Range.ofOpenEndRange(other).intersect(Range.ofClosedRange(range)) == range.toSet().intersect(other.toSet()).isNotEmpty())
+            }
+         }
       }
    }
 }
