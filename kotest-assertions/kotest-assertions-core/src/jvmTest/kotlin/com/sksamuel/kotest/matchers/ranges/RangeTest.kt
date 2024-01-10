@@ -166,36 +166,6 @@ class RangeTest: WordSpec() {
             }
          }
 
-         "work for closed open range inside closed one" {
-            io.kotest.property.forAll(
-               Arb.int(1..4), Arb.int(1..3), Arb.int(0..5), Arb.int(1..3)
-            ) { rangeStart, rangeLength, otherStart, otherLength ->
-               val rangeEnd = rangeStart + rangeLength
-               val otherEnd = otherStart + otherLength
-               val maybeOuter = rangeStart..rangeEnd
-               val maybeInner = otherStart..<otherEnd
-               maybeOuter.toClosedClosedRange().contains(
-                  maybeInner.toClosedOpenRange()
-               ) == (maybeOuter.toSet().intersect(maybeInner.toSet()) == maybeInner.toSet())
-            }
-         }
-
-         "reproduce" {
-            val rangeStart = 1
-            val rangeLength = 1
-            val otherStart = 1
-            val otherLength = 2
-            val rangeEnd = rangeStart + rangeLength
-            val otherEnd = otherStart + otherLength
-            val maybeOuter = rangeStart..rangeEnd
-            val maybeInner = otherStart..<otherEnd
-            val outerSet = maybeOuter.toSet()
-            val innerSet = maybeInner.toSet()
-            maybeOuter.toClosedClosedRange().contains(
-               maybeInner.toClosedOpenRange()
-            ) == (outerSet.intersect(innerSet) == innerSet) shouldBe true
-         }
-
          "work for closed open range inside closed open one" {
             io.kotest.property.forAll(
                Arb.int(1..4), Arb.int(1..3), Arb.int(0..5), Arb.int(1..3)

@@ -34,8 +34,8 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: ClosedRange<T>
 @OptIn(ExperimentalStdlibApi::class)
 inline infix fun <reified T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
    when(T::class) {
-      Int::class -> throw NotImplementedError("")
-      //this.should(beWithinClosedRangeOfInt(range as ClosedRange<Int>))
+      Int::class -> //throw NotImplementedError("")
+         (this as OpenEndRange<Int>).should(beWithinClosedRangeOfInt(range as ClosedRange<Int>))
       else -> Range.of(this) should beWithin(Range.of(range))
    }
    return this
@@ -166,9 +166,12 @@ internal fun withinClosedRangeOfInt(range: ClosedRange<Int>, value: OpenEndRange
    (value.start until value.endExclusive).all { range.contains(it) }
 
 @OptIn(ExperimentalStdlibApi::class)
-internal fun<T: Comparable<T>> resultForWithin(range: ClosedRange<T>, value: OpenEndRange<T>, match: Boolean) =
-   MatcherResult(
+internal fun<T: Comparable<T>> resultForWithin(range: ClosedRange<T>, value: OpenEndRange<T>, match: Boolean): MatcherResult {
+   val valueStr = "[${value.start}, ${value.endExclusive})"
+   val rangeStr = "[${range.start}, ${range.endInclusive}]"
+   return MatcherResult(
       match,
-      { "Range ${value.print().value} should be within ${range.print().value}, but it isn't" },
-      { "Range ${value.print().value} should not be within ${range.print().value}, but it is" }
+      { "Range $valueStr should be within $rangeStr, but it isn't" },
+      { "Range $valueStr should not be within $rangeStr, but it is" }
    )
+}
