@@ -144,9 +144,11 @@ class RangeTest: WordSpec() {
             ) { rangeStart, rangeLength, otherStart, otherLength ->
                val rangeEnd = rangeStart + rangeLength
                val otherEnd = otherStart + otherLength
-               (rangeStart..rangeEnd).toClosedClosedRange().contains(
-                  (otherStart..otherEnd).toClosedClosedRange()
-               ) == ((rangeStart <= otherStart) && (otherEnd <= rangeEnd))
+               val maybeOuter = rangeStart..rangeEnd
+               val maybeInner = otherStart..otherEnd
+               maybeOuter.toClosedClosedRange().contains(
+                  maybeInner.toClosedClosedRange()
+               ) == (maybeOuter.toSet().intersect(maybeInner.toSet()) == maybeInner.toSet())
             }
          }
 
@@ -156,9 +158,11 @@ class RangeTest: WordSpec() {
             ) { rangeStart, rangeLength, otherStart, otherLength ->
                val rangeEnd = rangeStart + rangeLength
                val otherEnd = otherStart + otherLength
-               (rangeStart..<rangeEnd).toClosedOpenRange().contains(
-                  (otherStart..otherEnd).toClosedClosedRange()
-               ) == ((rangeStart <= otherStart) && (otherEnd < rangeEnd))
+               val maybeOuter = rangeStart..<rangeEnd
+               val maybeInner = otherStart..otherEnd
+               maybeOuter.toClosedOpenRange().contains(
+                  maybeInner.toClosedClosedRange()
+               ) == (maybeOuter.toSet().intersect(maybeInner.toSet()) == maybeInner.toSet())
             }
          }
 
@@ -168,10 +172,28 @@ class RangeTest: WordSpec() {
             ) { rangeStart, rangeLength, otherStart, otherLength ->
                val rangeEnd = rangeStart + rangeLength
                val otherEnd = otherStart + otherLength
-               (rangeStart..rangeEnd).toClosedClosedRange().contains(
-                  (otherStart..<otherEnd).toClosedOpenRange()
-               ) == ((rangeStart <= otherStart) && (otherEnd <= rangeEnd))
+               val maybeOuter = rangeStart..rangeEnd
+               val maybeInner = otherStart..<otherEnd
+               maybeOuter.toClosedClosedRange().contains(
+                  maybeInner.toClosedOpenRange()
+               ) == (maybeOuter.toSet().intersect(maybeInner.toSet()) == maybeInner.toSet())
             }
+         }
+
+         "reproduce" {
+            val rangeStart = 1
+            val rangeLength = 1
+            val otherStart = 1
+            val otherLength = 2
+            val rangeEnd = rangeStart + rangeLength
+            val otherEnd = otherStart + otherLength
+            val maybeOuter = rangeStart..rangeEnd
+            val maybeInner = otherStart..<otherEnd
+            val outerSet = maybeOuter.toSet()
+            val innerSet = maybeInner.toSet()
+            maybeOuter.toClosedClosedRange().contains(
+               maybeInner.toClosedOpenRange()
+            ) == (outerSet.intersect(innerSet) == innerSet) shouldBe true
          }
 
          "work for closed open range inside closed open one" {
@@ -180,9 +202,11 @@ class RangeTest: WordSpec() {
             ) { rangeStart, rangeLength, otherStart, otherLength ->
                val rangeEnd = rangeStart + rangeLength
                val otherEnd = otherStart + otherLength
-               (rangeStart..<rangeEnd).toClosedOpenRange().contains(
-                  (otherStart..<otherEnd).toClosedOpenRange()
-               ) == ((rangeStart <= otherStart) && (otherEnd <= rangeEnd))
+               val maybeOuter = rangeStart..<rangeEnd
+               val maybeInner = otherStart..<otherEnd
+               maybeOuter.toClosedOpenRange().contains(
+                  maybeInner.toClosedOpenRange()
+               ) == (maybeOuter.toSet().intersect(maybeInner.toSet()) == maybeInner.toSet())
             }
          }
       }

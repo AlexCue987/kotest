@@ -32,8 +32,12 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: ClosedRange<T>
  * @see [beWithin]
  */
 @OptIn(ExperimentalStdlibApi::class)
-infix fun <T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
-   Range.of(this) should beWithin(Range.of(range))
+inline infix fun <reified T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
+   when(T::class) {
+      Int::class -> throw NotImplementedError("")
+      //this.should(beWithinClosedRangeOfInt(range as ClosedRange<Int>))
+      else -> Range.of(this) should beWithin(Range.of(range))
+   }
    return this
 }
 
@@ -146,3 +150,25 @@ fun <T: Comparable<T>> beWithin(range: Range<T>) = object : Matcher<Range<T>> {
    }
 }
 
+@OptIn(ExperimentalStdlibApi::class)
+fun beWithinClosedRangeOfInt(range: ClosedRange<Int>) = object : Matcher<OpenEndRange<Int>> {
+   override fun test(value: OpenEndRange<Int>): MatcherResult {
+      if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
+
+      val match = withinClosedRangeOfInt(range, value)
+
+      return resultForWithin(range, value, match)
+   }
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+internal fun withinClosedRangeOfInt(range: ClosedRange<Int>, value: OpenEndRange<Int>) =
+   (value.start until value.endExclusive).all { range.contains(it) }
+
+@OptIn(ExperimentalStdlibApi::class)
+internal fun<T: Comparable<T>> resultForWithin(range: ClosedRange<T>, value: OpenEndRange<T>, match: Boolean) =
+   MatcherResult(
+      match,
+      { "Range ${value.print().value} should be within ${range.print().value}, but it isn't" },
+      { "Range ${value.print().value} should not be within ${range.print().value}, but it is" }
+   )
