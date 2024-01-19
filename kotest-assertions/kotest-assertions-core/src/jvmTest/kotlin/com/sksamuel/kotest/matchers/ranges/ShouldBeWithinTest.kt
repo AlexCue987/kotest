@@ -40,10 +40,16 @@ class ShouldBeWithinTest : WordSpec() {
             }
          }
 
-         "handle edge case of OpenEndRange inside ClosedRange for discrete numeric" {
-            val closedRangeInt: ClosedRange<Int> = 1..2
-            val openEndRangeInt: OpenEndRange<Int> = 1 until 3
-            openEndRangeInt shouldBeWithin closedRangeInt
+         "handle edge case of OpenEndRange inside ClosedRange for Int" {
+            val closedRange: ClosedRange<Int> = 1..2
+            val openEndRange: OpenEndRange<Int> = 1 until 3
+            openEndRange shouldBeWithin closedRange
+         }
+
+         "handle edge case of OpenEndRange inside ClosedRange for Long" {
+            val closedRange: ClosedRange<Long> = 1L..2L
+            val openEndRange: OpenEndRange<Long> = 1L until 3L
+            openEndRange shouldBeWithin closedRange
          }
        }
 

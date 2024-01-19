@@ -35,11 +35,7 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: ClosedRange<T>
 internal inline infix fun <reified T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
    when(T::class) {
       Int::class -> shouldBeWithinRangeOfInt(this as OpenEndRange<Int>, range as ClosedRange<Int>)
-//      {
-//         val matcher: Matcher<OpenEndRange<Int>> = beWithinRangeOfInt(range as ClosedRange<Int>)
-//         //(this as OpenEndRange<*>).should<Matcher<T>>(beWithinRangeOfDiscreteNumbers(range as ClosedRange<*>, incrementerForInt))
-//         this should matcher
-//      }
+      Long::class -> shouldBeWithinRangeOfLong(this as OpenEndRange<Long>, range as ClosedRange<Long>)
       else -> Range.of(this) should beWithin(Range.of(range))
    }
    return this
@@ -169,6 +165,22 @@ fun beWithinRangeOfInt(
 ) = object : Matcher<OpenEndRange<Int>> {
    override fun test(value: OpenEndRange<Int>): MatcherResult {
       return resultForWithin(range, value, (range.endInclusive + 1))
+   }
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+fun shouldBeWithinRangeOfLong(value: OpenEndRange<Long>,
+                             range: ClosedRange<Long>
+){
+   value should beWithinRangeOfLong(range)
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+fun beWithinRangeOfLong(
+   range: ClosedRange<Long>
+) = object : Matcher<OpenEndRange<Long>> {
+   override fun test(value: OpenEndRange<Long>): MatcherResult {
+      return resultForWithin(range, value, (range.endInclusive + 1L))
    }
 }
 
