@@ -32,6 +32,7 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: ClosedRange<T>
  * @see [beWithin]
  */
 @OptIn(ExperimentalStdlibApi::class)
+@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 inline infix fun <reified T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
    when(T::class) {
       Int::class -> shouldBeWithinRangeOfInt(this as OpenEndRange<Int>, range as ClosedRange<Int>)
@@ -138,7 +139,7 @@ infix fun <T: Comparable<T>> OpenEndRange<T>.shouldNotBeWithin(range: OpenEndRan
  * An empty range will always fail. If you need to check for empty range, use [Iterable.shouldBeEmpty]
  *
  */
-@PublishedApi
+//@PublishedApi
 internal fun <T: Comparable<T>> beWithin(range: Range<T>) = object : Matcher<Range<T>> {
    override fun test(value: Range<T>): MatcherResult {
       if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
@@ -154,7 +155,7 @@ internal fun <T: Comparable<T>> beWithin(range: Range<T>) = object : Matcher<Ran
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-@PublishedApi
+//@PublishedApi
 internal fun shouldBeWithinRangeOfInt(value: OpenEndRange<Int>,
    range: ClosedRange<Int>
 ){
@@ -162,7 +163,7 @@ internal fun shouldBeWithinRangeOfInt(value: OpenEndRange<Int>,
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-@PublishedApi
+//@PublishedApi
 internal fun shouldNotBeWithinRangeOfInt(value: OpenEndRange<Int>,
                                       range: ClosedRange<Int>
 ){
@@ -170,7 +171,7 @@ internal fun shouldNotBeWithinRangeOfInt(value: OpenEndRange<Int>,
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-@PublishedApi
+//@PublishedApi
 internal fun beWithinRangeOfInt(
    range: ClosedRange<Int>
 ) = object : Matcher<OpenEndRange<Int>> {
@@ -180,7 +181,7 @@ internal fun beWithinRangeOfInt(
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-@PublishedApi
+//@PublishedApi
 internal fun shouldBeWithinRangeOfLong(value: OpenEndRange<Long>,
                              range: ClosedRange<Long>
 ){
