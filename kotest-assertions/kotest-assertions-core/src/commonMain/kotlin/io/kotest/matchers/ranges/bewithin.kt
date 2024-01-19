@@ -112,8 +112,13 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldNotBeWithin(range: OpenEndRang
  * @see [beWithin]
  */
 @OptIn(ExperimentalStdlibApi::class)
-infix fun <T: Comparable<T>> OpenEndRange<T>.shouldNotBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
-   Range.of(this) shouldNot beWithin(Range.of(range))
+@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+inline infix fun <reified T: Comparable<T>> OpenEndRange<T>.shouldNotBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
+   when(T::class) {
+      Int::class -> shouldNotBeWithinRangeOfInt(this as OpenEndRange<Int>, range as ClosedRange<Int>)
+      Long::class -> shouldNotBeWithinRangeOfLong(this as OpenEndRange<Long>, range as ClosedRange<Long>)
+      else -> Range.of(this) shouldNot beWithin(Range.of(range))
+   }
    return this
 }
 

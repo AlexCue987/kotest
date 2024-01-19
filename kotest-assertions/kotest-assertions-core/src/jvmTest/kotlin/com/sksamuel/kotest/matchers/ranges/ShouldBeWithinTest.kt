@@ -69,6 +69,22 @@ class ShouldBeWithinTest : WordSpec() {
             }.message shouldBe "Range [1, 3) should not be within [0, 4), but it is"
          }
 
+         "fail for edge case of OpenEndRange inside ClosedRange for Int" {
+            val closedRange: ClosedRange<Int> = 1..2
+            val openEndRange: OpenEndRange<Int> = 1 until 3
+            shouldThrowAny {
+               openEndRange shouldNotBeWithin closedRange
+            }.message shouldBe "Range [1, 3) should not be within [1, 2], but it is"
+         }
+
+         "fail for edge case of OpenEndRange inside ClosedRange for Long" {
+            val closedRange: ClosedRange<Long> = 1L..2L
+            val openEndRange: OpenEndRange<Long> = 1L until 3L
+            shouldThrowAny {
+               openEndRange shouldNotBeWithin closedRange
+            }.message shouldBe "Range [1, 3) should not be within [1, 2], but it is"
+         }
+
          "succeed" {
             assertSoftly {
                bigClosedRange shouldNotBeWithin smallClosedRange
