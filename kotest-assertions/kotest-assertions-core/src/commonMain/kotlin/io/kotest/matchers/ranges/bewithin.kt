@@ -32,14 +32,20 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: ClosedRange<T>
  * @see [beWithin]
  */
 @OptIn(ExperimentalStdlibApi::class)
-inline infix fun <reified T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
+internal inline infix fun <reified T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
    when(T::class) {
-      Int::class -> //throw NotImplementedError("")
-         (this as OpenEndRange<Int>).should(beWithinClosedRangeOfInt(range as ClosedRange<Int>))
+      Int::class -> shouldBeWithinRangeOfInt(this as OpenEndRange<Int>, range as ClosedRange<Int>)
+//      {
+//         val matcher: Matcher<OpenEndRange<Int>> = beWithinRangeOfInt(range as ClosedRange<Int>)
+//         //(this as OpenEndRange<*>).should<Matcher<T>>(beWithinRangeOfDiscreteNumbers(range as ClosedRange<*>, incrementerForInt))
+//         this should matcher
+//      }
       else -> Range.of(this) should beWithin(Range.of(range))
    }
    return this
 }
+
+//private val incrementerForInt: (Int) -> Int = Int::plus
 
 /**
  * Verifies that this [ClosedRange] beWithins with an [OpenEndRange].
@@ -151,22 +157,67 @@ fun <T: Comparable<T>> beWithin(range: Range<T>) = object : Matcher<Range<T>> {
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-fun beWithinClosedRangeOfInt(range: ClosedRange<Int>) = object : Matcher<OpenEndRange<Int>> {
+fun shouldBeWithinRangeOfInt(value: OpenEndRange<Int>,
+   range: ClosedRange<Int>
+){
+   value should beWithinRangeOfInt(range)
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+fun beWithinRangeOfInt(
+   range: ClosedRange<Int>
+) = object : Matcher<OpenEndRange<Int>> {
    override fun test(value: OpenEndRange<Int>): MatcherResult {
-      if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
-
-      val match = withinClosedRangeOfInt(range, value)
-
-      return resultForWithin(range, value, match)
+      return resultForWithin(range, value, (range.endInclusive + 1))
    }
 }
+
+//@OptIn(ExperimentalStdlibApi::class)
+//fun <T: Comparable<T>> beWithinRangeOfDiscreteNumbers(
+//   range: ClosedRange<T>,
+//   incrementer: (T) -> T
+//) = object : Matcher<OpenEndRange<T>> {
+//   override fun test(value: OpenEndRange<T>): MatcherResult {
+//      if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
+//
+//      val match = (range.start <= value.start) && (value.endExclusive <= incrementer(range.endInclusive))
+//
+//      return resultForWithin(range, value, match)
+//   }
+//}
+
+//@OptIn(ExperimentalStdlibApi::class)
+//fun <T: Comparable<T>> openEndRangeWithinClosedRangeForDiscreteNumerics(
+//   range: ClosedRange<T>,
+//   value: OpenEndRange<T>,
+//   valueBeforeOpenEndRangeEnd: T,
+//): Matcher<OpenEndRange<T>> {
+//   if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
+//
+//   val match = (range.start <= value.start) && (valueBeforeOpenEndRangeEnd <= range.endInclusive)
+//
+//   return resultForWithin(range, value, match)
+//}
+
+//@OptIn(ExperimentalStdlibApi::class)
+//fun beWithinClosedRangeOfInt(range: ClosedRange<Int>) = object : Matcher<OpenEndRange<Int>> {
+//   override fun test(value: OpenEndRange<Int>): MatcherResult {
+//      if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
+//
+//      val match = withinClosedRangeOfInt(range, value)
+//
+//      return resultForWithin(range, value, match)
+//   }
+//}
 
 @OptIn(ExperimentalStdlibApi::class)
 internal fun withinClosedRangeOfInt(range: ClosedRange<Int>, value: OpenEndRange<Int>) =
    (value.start until value.endExclusive).all { range.contains(it) }
 
 @OptIn(ExperimentalStdlibApi::class)
-internal fun<T: Comparable<T>> resultForWithin(range: ClosedRange<T>, value: OpenEndRange<T>, match: Boolean): MatcherResult {
+internal fun<T: Comparable<T>> resultForWithin(range: ClosedRange<T>, value: OpenEndRange<T>, valueAfterRangeEnd: T): MatcherResult {
+   if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
+   val match = (range.start <= value.start) && (value.endExclusive <= valueAfterRangeEnd)
    val valueStr = "[${value.start}, ${value.endExclusive})"
    val rangeStr = "[${range.start}, ${range.endInclusive}]"
    return MatcherResult(
