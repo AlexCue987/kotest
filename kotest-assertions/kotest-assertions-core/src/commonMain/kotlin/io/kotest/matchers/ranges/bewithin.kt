@@ -32,7 +32,7 @@ infix fun <T: Comparable<T>> ClosedRange<T>.shouldBeWithin(range: ClosedRange<T>
  * @see [beWithin]
  */
 @OptIn(ExperimentalStdlibApi::class)
-internal inline infix fun <reified T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
+inline infix fun <reified T: Comparable<T>> OpenEndRange<T>.shouldBeWithin(range: ClosedRange<T>): OpenEndRange<T> {
    when(T::class) {
       Int::class -> shouldBeWithinRangeOfInt(this as OpenEndRange<Int>, range as ClosedRange<Int>)
       Long::class -> shouldBeWithinRangeOfLong(this as OpenEndRange<Long>, range as ClosedRange<Long>)
@@ -138,7 +138,8 @@ infix fun <T: Comparable<T>> OpenEndRange<T>.shouldNotBeWithin(range: OpenEndRan
  * An empty range will always fail. If you need to check for empty range, use [Iterable.shouldBeEmpty]
  *
  */
-fun <T: Comparable<T>> beWithin(range: Range<T>) = object : Matcher<Range<T>> {
+@PublishedApi
+internal fun <T: Comparable<T>> beWithin(range: Range<T>) = object : Matcher<Range<T>> {
    override fun test(value: Range<T>): MatcherResult {
       if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
 
@@ -153,14 +154,24 @@ fun <T: Comparable<T>> beWithin(range: Range<T>) = object : Matcher<Range<T>> {
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-fun shouldBeWithinRangeOfInt(value: OpenEndRange<Int>,
+@PublishedApi
+internal fun shouldBeWithinRangeOfInt(value: OpenEndRange<Int>,
    range: ClosedRange<Int>
 ){
    value should beWithinRangeOfInt(range)
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-fun beWithinRangeOfInt(
+@PublishedApi
+internal fun shouldNotBeWithinRangeOfInt(value: OpenEndRange<Int>,
+                                      range: ClosedRange<Int>
+){
+   value shouldNot beWithinRangeOfInt(range)
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+@PublishedApi
+internal fun beWithinRangeOfInt(
    range: ClosedRange<Int>
 ) = object : Matcher<OpenEndRange<Int>> {
    override fun test(value: OpenEndRange<Int>): MatcherResult {
@@ -169,14 +180,22 @@ fun beWithinRangeOfInt(
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-fun shouldBeWithinRangeOfLong(value: OpenEndRange<Long>,
+@PublishedApi
+internal fun shouldBeWithinRangeOfLong(value: OpenEndRange<Long>,
                              range: ClosedRange<Long>
 ){
    value should beWithinRangeOfLong(range)
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-fun beWithinRangeOfLong(
+internal fun shouldNotBeWithinRangeOfLong(value: OpenEndRange<Long>,
+                                       range: ClosedRange<Long>
+){
+   value shouldNot beWithinRangeOfLong(range)
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+internal fun beWithinRangeOfLong(
    range: ClosedRange<Long>
 ) = object : Matcher<OpenEndRange<Long>> {
    override fun test(value: OpenEndRange<Long>): MatcherResult {
