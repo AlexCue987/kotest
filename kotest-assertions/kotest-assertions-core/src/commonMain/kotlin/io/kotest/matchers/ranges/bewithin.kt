@@ -172,48 +172,6 @@ fun beWithinRangeOfInt(
    }
 }
 
-//@OptIn(ExperimentalStdlibApi::class)
-//fun <T: Comparable<T>> beWithinRangeOfDiscreteNumbers(
-//   range: ClosedRange<T>,
-//   incrementer: (T) -> T
-//) = object : Matcher<OpenEndRange<T>> {
-//   override fun test(value: OpenEndRange<T>): MatcherResult {
-//      if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
-//
-//      val match = (range.start <= value.start) && (value.endExclusive <= incrementer(range.endInclusive))
-//
-//      return resultForWithin(range, value, match)
-//   }
-//}
-
-//@OptIn(ExperimentalStdlibApi::class)
-//fun <T: Comparable<T>> openEndRangeWithinClosedRangeForDiscreteNumerics(
-//   range: ClosedRange<T>,
-//   value: OpenEndRange<T>,
-//   valueBeforeOpenEndRangeEnd: T,
-//): Matcher<OpenEndRange<T>> {
-//   if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
-//
-//   val match = (range.start <= value.start) && (valueBeforeOpenEndRangeEnd <= range.endInclusive)
-//
-//   return resultForWithin(range, value, match)
-//}
-
-//@OptIn(ExperimentalStdlibApi::class)
-//fun beWithinClosedRangeOfInt(range: ClosedRange<Int>) = object : Matcher<OpenEndRange<Int>> {
-//   override fun test(value: OpenEndRange<Int>): MatcherResult {
-//      if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
-//
-//      val match = withinClosedRangeOfInt(range, value)
-//
-//      return resultForWithin(range, value, match)
-//   }
-//}
-
-@OptIn(ExperimentalStdlibApi::class)
-internal fun withinClosedRangeOfInt(range: ClosedRange<Int>, value: OpenEndRange<Int>) =
-   (value.start until value.endExclusive).all { range.contains(it) }
-
 @OptIn(ExperimentalStdlibApi::class)
 internal fun<T: Comparable<T>> resultForWithin(range: ClosedRange<T>, value: OpenEndRange<T>, valueAfterRangeEnd: T): MatcherResult {
    if (range.isEmpty()) throw AssertionError("Asserting content on empty range. Use Iterable.shouldBeEmpty() instead.")
