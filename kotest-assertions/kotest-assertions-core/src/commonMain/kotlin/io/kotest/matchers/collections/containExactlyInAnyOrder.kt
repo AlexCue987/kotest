@@ -129,6 +129,7 @@ fun <T, C : Collection<T>> containExactlyInAnyOrder(
    val extra = actual.filterNot { t ->
       expected.any { verifier?.verify(it, t)?.areEqual() ?: (t == it) }
    }
+//   val countMismatch
 
    val failureMessage = {
       buildString {
@@ -146,4 +147,23 @@ fun <T, C : Collection<T>> containExactlyInAnyOrder(
       failureMessage,
       negatedFailureMessage
    )
+}
+
+internal fun<T> countMismatch(expectedCounts: Map<T, Int>, actualCounts: Map<T, Int>) =
+   actualCounts.entries.mapNotNull { actualEntry ->
+      expectedCounts[actualEntry.key]?.let { expectedValue ->
+         if(actualEntry.value != expectedValue)
+            CountMismatch(actualEntry.key, expectedValue, actualEntry.value)
+         else null
+      }
+   }
+
+internal data class CountMismatch<T>(val key: T, val expectedCount: Int, val actualCount: Int) {
+   init {
+       require(expectedCount >= 0 && actualCount >= 0) {
+          "Both expected and actual count should be non-negative, but expected was: $expectedCount and actual: was: $actualCount"
+       }
+   }
+
+   override fun toString(): String = "Key=\"${key}\", expected count: $expectedCount, but was: $actualCount"
 }
