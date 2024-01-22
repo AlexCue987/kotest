@@ -129,14 +129,19 @@ fun <T, C : Collection<T>> containExactlyInAnyOrder(
    val extra = actual.filterNot { t ->
       expected.any { verifier?.verify(it, t)?.areEqual() ?: (t == it) }
    }
-//   val countMismatch
+   val countMismatch = countMismatch(expectedGroupedCounts, valueGroupedCounts)
 
    val failureMessage = {
       buildString {
          append("Collection should contain ${expected.print().value} in any order, but was ${actual.print().value}")
          appendLine()
          appendMissingAndExtra(missing, extra)
-         appendLine()
+         if(missing.isNotEmpty() || extra.isNotEmpty()) {
+            appendLine()
+         }
+         if(countMismatch.isNotEmpty()) {
+            append("CountMismatches: ${countMismatch.joinToString(", ")}")
+         }
       }
    }
 

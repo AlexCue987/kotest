@@ -295,6 +295,17 @@ class ShouldContainExactlyTest : WordSpec() {
             )
          }
 
+         "print count mismatches" {
+            shouldThrow<AssertionError> {
+               listOf(1, 2, 2, 3).shouldContainExactlyInAnyOrder(listOf(1, 2, 3, 3))
+            }.shouldHaveMessage(
+               """
+                  Collection should contain [1, 2, 3, 3] in any order, but was [1, 2, 2, 3]
+                  CountMismatches: Key="2", expected count: 1, but was: 2, Key="3", expected count: 2, but was: 1
+               """.trimIndent()
+            )
+         }
+
          "disambiguate when using optional expected value" {
             val actual: List<String> = listOf("A", "B", "C")
             val expected: List<String>? = listOf("A", "B", "C")
@@ -306,12 +317,6 @@ class ShouldContainExactlyTest : WordSpec() {
                it shouldContainExactlyInAnyOrder listOf("1", "2", "3", "4", "5", "6", "7")
             }
          }
-
-
-         "exactly" {
-            listOf(1, 2, 2, 3, 4) should containExactlyInAnyOrder(listOf(1, 2, 3, 3, 5))
-         }
-
       }
 
       "countMismatch" should {
