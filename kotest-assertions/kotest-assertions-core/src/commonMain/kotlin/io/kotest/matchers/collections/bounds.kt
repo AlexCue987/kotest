@@ -46,8 +46,11 @@ infix fun <T : Comparable<T>, C : Collection<T>> C.shouldHaveLowerBound(t: T): C
 }
 
 fun <T : Comparable<T>, C : Collection<T>> haveLowerBound(t: T) = object : Matcher<C> {
-   override fun test(value: C) = MatcherResult(
-      value.all { t <= it },
-      { "Collection should have lower bound $t" },
-      { "Collection should not have lower bound $t" })
+   override fun test(value: C): MatcherResult {
+      val violatingElements = value.filter { it < t }
+      return MatcherResult(
+         violatingElements.isEmpty(),
+         { "Collection should have lower bound $t, but the following elements are below it: ${violatingElements.print().value}" },
+         { "Collection should not have lower bound $t" })
+   }
 }
