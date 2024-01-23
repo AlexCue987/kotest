@@ -42,3 +42,10 @@ fun <T> containDuplicates() = object : Matcher<Collection<T>> {
          "Collection should not contain duplicates"
       })
 }
+
+internal fun<T> Collection<T>.duplicates(): Collection<T> = this.groupingBy { it }
+   .eachCount().entries
+   .mapNotNull { when(it.value) {
+      1 -> null
+      else -> it.key
+   } }
