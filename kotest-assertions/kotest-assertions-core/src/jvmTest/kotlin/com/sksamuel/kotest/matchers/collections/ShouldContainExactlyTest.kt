@@ -108,13 +108,15 @@ class ShouldContainExactlyTest : WordSpec() {
             shouldThrow<AssertionError> {
                listOf<Any>(1L, 2L).shouldContainExactly(listOf<Any>(1, 2))
             } shouldHaveMessage
-               """Collection should contain exactly: [1, 2] but was: [1L, 2L]
-
-Mismatch:
-expected[0] = 1L
-expected[1] = 2L
-actual[0] = 1
-actual[1] = 2""".trimMargin()
+               """
+                  |Collection should contain exactly: [1, 2] but was: [1L, 2L]
+                  |
+                  |Mismatch:
+                  |expected[0] = 1L
+                  |expected[1] = 2L
+                  |actual[0] = 1
+                  |actual[1] = 2
+                  """.trimMargin()
          }
 
          "print dataclasses" {
@@ -128,14 +130,16 @@ actual[1] = 2""".trimMargin()
                   Blonde("woo", true, 97821, inputPath)
                )
             }.message?.trim() shouldBe
-               """Collection should contain exactly: [Blonde(a=foo, b=true, c=23423, p=a/b/c), Blonde(a=woo, b=true, c=97821, p=a/b/c)] but was: [Blonde(a=foo, b=true, c=23423, p=a/b/c), Blonde(a=woo, b=true, c=97821, p=a/b/c), Blonde(a=goo, b=true, c=51984, p=a/b/c)]
-
-Match:
-expected[0] == actual[0]: Blonde(a=foo, b=true, c=23423, p=a/b/c)
-expected[1] == actual[1]: Blonde(a=woo, b=true, c=97821, p=a/b/c)
-
-Mismatch:
-expected[2] = Blonde(a=goo, b=true, c=51984, p=a/b/c)""".trimMargin()
+               """
+                  |Collection should contain exactly: [Blonde(a=foo, b=true, c=23423, p=a/b/c), Blonde(a=woo, b=true, c=97821, p=a/b/c)] but was: [Blonde(a=foo, b=true, c=23423, p=a/b/c), Blonde(a=woo, b=true, c=97821, p=a/b/c), Blonde(a=goo, b=true, c=51984, p=a/b/c)]
+                  |
+                  |Match:
+                  |expected[0] == actual[0]: Blonde(a=foo, b=true, c=23423, p=a/b/c)
+                  |expected[1] == actual[1]: Blonde(a=woo, b=true, c=97821, p=a/b/c)
+                  |
+                  |Mismatch:
+                  |expected[2] = Blonde(a=goo, b=true, c=51984, p=a/b/c)
+                  """.trimMargin()
          }
 
          "include extras when too many" {
@@ -147,13 +151,15 @@ expected[2] = Blonde(a=goo, b=true, c=51984, p=a/b/c)""".trimMargin()
                   Blonde("woo", true, 97821, inputPath)
                )
             }.message?.trim() shouldBe
-               """Collection should contain exactly: [Blonde(a=foo, b=true, c=23423, p=a/b/c), Blonde(a=woo, b=true, c=97821, p=a/b/c)] but was: [Blonde(a=foo, b=true, c=23423, p=a/b/c)]
-
-Match:
-expected[0] == actual[0]: Blonde(a=foo, b=true, c=23423, p=a/b/c)
-
-Mismatch:
-actual[1] = Blonde(a=woo, b=true, c=97821, p=a/b/c)""".trimMargin()
+               """
+                  |Collection should contain exactly: [Blonde(a=foo, b=true, c=23423, p=a/b/c), Blonde(a=woo, b=true, c=97821, p=a/b/c)] but was: [Blonde(a=foo, b=true, c=23423, p=a/b/c)]
+                  |
+                  |Match:
+                  |expected[0] == actual[0]: Blonde(a=foo, b=true, c=23423, p=a/b/c)
+                  |
+                  |Mismatch:
+                  |actual[1] = Blonde(a=woo, b=true, c=97821, p=a/b/c)
+""".trimMargin()
          }
 
          "include missing when too few" {
@@ -166,12 +172,14 @@ actual[1] = Blonde(a=woo, b=true, c=97821, p=a/b/c)""".trimMargin()
                   Blonde("woo", true, 97821, inputPath)
                )
             }.message?.trim() shouldBe
-               """Collection should contain exactly: [Blonde(a=woo, b=true, c=97821, p=a/b/c)] but was: [Blonde(a=foo, b=true, c=23423, p=a/b/c), Blonde(a=hoo, b=true, c=96915, p=a/b/c)]
-
-Mismatch:
-expected[0] = Blonde(a=foo, b=true, c=23423, p=a/b/c)
-expected[1] = Blonde(a=hoo, b=true, c=96915, p=a/b/c)
-actual[0] = Blonde(a=woo, b=true, c=97821, p=a/b/c)""".trimMargin()
+               """
+                  |Collection should contain exactly: [Blonde(a=woo, b=true, c=97821, p=a/b/c)] but was: [Blonde(a=foo, b=true, c=23423, p=a/b/c), Blonde(a=hoo, b=true, c=96915, p=a/b/c)]
+                  |
+                  |Mismatch:
+                  |expected[0] = Blonde(a=foo, b=true, c=23423, p=a/b/c)
+                  |expected[1] = Blonde(a=hoo, b=true, c=96915, p=a/b/c)
+                  |actual[0] = Blonde(a=woo, b=true, c=97821, p=a/b/c)
+""".trimMargin()
          }
 
          "include missing and extras when not the right amount" {
@@ -184,13 +192,15 @@ actual[0] = Blonde(a=woo, b=true, c=97821, p=a/b/c)""".trimMargin()
                   Blonde("goo", true, 51984, inputPath)
                )
             }.message?.trim() shouldBe
-               """Collection should contain exactly: [Blonde(a=woo, b=true, c=97821, p=a/b/c), Blonde(a=goo, b=true, c=51984, p=a/b/c)] but was: [Blonde(a=foo, b=true, c=23423, p=a/b/c), Blonde(a=hoo, b=true, c=96915, p=a/b/c)]
-
-Mismatch:
-expected[0] = Blonde(a=foo, b=true, c=23423, p=a/b/c)
-expected[1] = Blonde(a=hoo, b=true, c=96915, p=a/b/c)
-actual[0] = Blonde(a=woo, b=true, c=97821, p=a/b/c)
-actual[1] = Blonde(a=goo, b=true, c=51984, p=a/b/c)""".trimMargin()
+               """
+                  |Collection should contain exactly: [Blonde(a=woo, b=true, c=97821, p=a/b/c), Blonde(a=goo, b=true, c=51984, p=a/b/c)] but was: [Blonde(a=foo, b=true, c=23423, p=a/b/c), Blonde(a=hoo, b=true, c=96915, p=a/b/c)]
+                  |
+                  |Mismatch:
+                  |expected[0] = Blonde(a=foo, b=true, c=23423, p=a/b/c)
+                  |expected[1] = Blonde(a=hoo, b=true, c=96915, p=a/b/c)
+                  |actual[0] = Blonde(a=woo, b=true, c=97821, p=a/b/c)
+                  |actual[1] = Blonde(a=goo, b=true, c=51984, p=a/b/c)
+                  """.trimMargin()
          }
 
          "exclude full print with warning on large collections" {
