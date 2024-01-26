@@ -5,10 +5,8 @@ import io.kotest.assertions.eq.IterableEq
 import io.kotest.assertions.eq.eq
 import io.kotest.assertions.print.print
 import io.kotest.equals.Equality
-import io.kotest.matchers.ComparableMatcherResult
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
-import io.kotest.matchers.collections.detailed.compareLists
 import io.kotest.matchers.collections.detailed.describeListsMismatch
 import io.kotest.matchers.neverNullMatcher
 import io.kotest.matchers.should

@@ -1,47 +1,5 @@
 package io.kotest.matchers.collections.detailed
 
-import io.kotest.matchers.Matcher
-import io.kotest.matchers.MatcherResult
-import io.kotest.matchers.should
-
-infix fun <T> List<T>.shouldMatchList(other: List<T>) = this should matchList(other)
-
-fun <T> List<T>.shouldMatchList(other: List<T>,
-                                      matcher: (left: T, right: T) -> Boolean = {left, right -> left == right}
-) = this should matchList(other, matcher)
-
-/**
- * @param other list that needs to be compared against
- * @param matcher optional custom lambda to compare elements, defaults to Any.equals
- */
-fun <T> List<T>.matchList(
-   other: List<T>,
-   matcher: (left: T, right: T) -> Boolean = {left, right -> left == right}
-): Matcher<List<T>> = object :
-   Matcher<List<T>> {
-   override fun test(value: List<T>): MatcherResult {
-      val assertionResult = compareLists(expected = other, actual = value, matcher = matcher)
-      return MatcherResult(
-         assertionResult.success,
-         { assertionResult.message },
-         { "Lists should not be equal, but were: ${other.joinToString("\n") { it.toString() }}" }
-      )
-   }
-}
-
-internal fun <T> compareLists(expected: List<T>, actual: List<T>,
-                     matcher: (left: T, right: T) -> Boolean = {left, right -> left == right}
-): AssertionResult {
-    val listMatcher = ListMatcher()
-    val results = listMatcher.match(expected, actual, matcher)
-    return if (results.size == 1 && results[0].match) {
-        AssertionResult(true)
-    } else {
-        val mismatchDescription = printMatches(expected, actual, results)
-        AssertionResult(false, mismatchDescription)
-    }
-}
-
 internal fun <T> describeListsMismatch(expected: List<T>, actual: List<T>): String {
    val listMatcher = ListMatcher()
    val results = listMatcher.match(expected, actual)
