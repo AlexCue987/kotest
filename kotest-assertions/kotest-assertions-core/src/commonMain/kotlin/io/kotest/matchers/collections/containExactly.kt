@@ -8,6 +8,7 @@ import io.kotest.equals.Equality
 import io.kotest.matchers.ComparableMatcherResult
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
+import io.kotest.matchers.collections.detailed.compareLists
 import io.kotest.matchers.neverNullMatcher
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
@@ -128,6 +129,16 @@ fun <T, C : Collection<T>> containExactly(
       )
    }
 }
+
+//internal fun<T> detailedMismatchDescription(expected: Collection<T>, actual: Collection<T>): String  =
+//   if (
+//      actual.size > AssertionsConfig.maxCollectionEnumerateSize ||
+//      expected.size > AssertionsConfig.maxCollectionEnumerateSize
+//   ) {
+//      ""
+//   } else {
+//      compareLists(expected.toList(), actual.toList()).message
+//   }
 
 @JvmName("shouldNotContainExactly_iterable")
 infix fun <T> Iterable<T>?.shouldNotContainExactly(expected: Iterable<T>) =
