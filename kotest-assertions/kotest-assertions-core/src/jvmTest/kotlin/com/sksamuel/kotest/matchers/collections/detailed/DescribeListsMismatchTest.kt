@@ -38,7 +38,7 @@ expected[0] = 1
 
 Match:
 expected[1] == actual[0]: 2
-expected[2] == actual[1]: null
+expected[2] == actual[1]: <null>
 
 Mismatch:
 actual[2] = 1

@@ -257,6 +257,27 @@ class ShouldContainExactlyTest : WordSpec() {
                   |(set the 'kotest.assertions.collection.enumerate.size' JVM property to see full output)
                """.trimMargin()
          }
+
+         "find matching sub-lists" {
+            val expected = listOf(sweetGreenApple, sweetRedApple, sweetGreenPear)
+            val actual = listOf(sweetGreenPear, sweetGreenApple, sweetRedApple)
+            shouldThrow<AssertionError> {
+               actual shouldContainExactly expected
+            }.shouldHaveMessage("""
+               |Collection should contain exactly: [Fruit(name=apple, color=green, taste=sweet), Fruit(name=apple, color=red, taste=sweet), Fruit(name=pear, color=green, taste=sweet)] but was: [Fruit(name=pear, color=green, taste=sweet), Fruit(name=apple, color=green, taste=sweet), Fruit(name=apple, color=red, taste=sweet)]
+               |
+               |Mismatch:
+               |expected[0] = Fruit(name=pear, color=green, taste=sweet)
+               |
+               |Match:
+               |expected[1] == actual[0]: Fruit(name=apple, color=green, taste=sweet)
+               |expected[2] == actual[1]: Fruit(name=apple, color=red, taste=sweet)
+               |
+               |Mismatch:
+               |actual[2] = Fruit(name=pear, color=green, taste=sweet)
+               |
+               |""".trimMargin())
+         }
       }
 
       "containExactlyInAnyOrder" should {
@@ -384,6 +405,17 @@ class ShouldContainExactlyTest : WordSpec() {
       val expectedPath = listOf("a", "b", "c").joinToString(File.separator)
 
    }
+
+   private val sweetGreenApple = Fruit("apple", "green", "sweet")
+   private val sweetRedApple = Fruit("apple", "red", "sweet")
+   private val sweetGreenPear = Fruit("pear", "green", "sweet")
+   private val sourYellowLemon = Fruit("lemon", "yellow", "sour")
 }
+
+internal data class Fruit(
+   val name: String,
+   val color: String,
+   val taste: String
+)
 
 data class Blonde(val a: String, val b: Boolean, val c: Int, val p: Path)
