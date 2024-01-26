@@ -9,6 +9,7 @@ import io.kotest.matchers.ComparableMatcherResult
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.collections.detailed.compareLists
+import io.kotest.matchers.collections.detailed.describeListsMismatch
 import io.kotest.matchers.neverNullMatcher
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
@@ -81,13 +82,14 @@ fun <T, C : Collection<T>> containExactly(
    }
    val passed = failureReason == null
 
+   val shortFailureMessage = "Collection should contain exactly: ${expected.print().value} but was: ${actual.print().value}"
    val failureMessage = {
       buildString {
          if (failureReason.isDisallowedIterableComparisonFailure()) {
             append(failureReason?.message)
          } else {
             append(
-               "Collection should contain exactly: ${expected.print().value} but was: ${actual.print().value}"
+               shortFailureMessage
             )
             appendLine()
          }
@@ -120,25 +122,23 @@ fun <T, C : Collection<T>> containExactly(
          },
       )
    } else {
-      ComparableMatcherResult(
+      MatcherResult(
          passed,
-         failureMessage,
-         negatedFailureMessage,
-         actual.print().value,
-         expected.print().value,
+         { "$shortFailureMessage\n${detailedMismatchDescription(actual, expected)}" },
+         negatedFailureMessage
       )
    }
 }
 
-//internal fun<T> detailedMismatchDescription(expected: Collection<T>, actual: Collection<T>): String  =
-//   if (
-//      actual.size > AssertionsConfig.maxCollectionEnumerateSize ||
-//      expected.size > AssertionsConfig.maxCollectionEnumerateSize
-//   ) {
-//      ""
-//   } else {
-//      compareLists(expected.toList(), actual.toList()).message
-//   }
+internal fun<T> detailedMismatchDescription(expected: Collection<T>, actual: Collection<T>): String  =
+   if (
+      actual.size > AssertionsConfig.maxCollectionEnumerateSize ||
+      expected.size > AssertionsConfig.maxCollectionEnumerateSize
+   ) {
+      ""
+   } else {
+      describeListsMismatch(expected.toList(), actual.toList())
+   }
 
 @JvmName("shouldNotContainExactly_iterable")
 infix fun <T> Iterable<T>?.shouldNotContainExactly(expected: Iterable<T>) =

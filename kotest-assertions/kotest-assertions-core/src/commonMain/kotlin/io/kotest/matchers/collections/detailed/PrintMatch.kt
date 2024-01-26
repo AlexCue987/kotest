@@ -1,5 +1,7 @@
 package io.kotest.matchers.collections.detailed
 
+import io.kotest.assertions.print.print
+
 internal fun<T> printMatches(leftList: List<T>, rightList: List<T>, matches: List<MatchResultsOfSubLists>): String {
     return with(StringBuilder()) {
         matches.forEach { append(if (it.match) printMatch(leftList, it) else printMismatch(leftList, rightList, it)) }
@@ -11,7 +13,7 @@ internal fun<T> printMatch(leftList: List<T>, match: MatchResultsOfSubLists): St
     return with(StringBuilder("\nMatch:\n")) {
         for (index in 0 until match.leftRange.length()) {
             val leftIndex = match.leftRange.start + index
-            append("expected[$leftIndex] == actual[${match.rightRange.start + index}]: ${leftList[leftIndex]}\n")
+            append("expected[$leftIndex] == actual[${match.rightRange.start + index}]: ${leftList[leftIndex].print().value}\n")
         }
         toString()
     }
@@ -22,13 +24,13 @@ internal fun<T> printMismatch(leftList: List<T>, rightList: List<T>, match: Matc
         if (!match.leftRange.isEmpty()) {
             for (index in 0 until match.leftRange.length()) {
                 val leftIndex = match.leftRange.start + index
-                append("expected[$leftIndex] = ${leftList[leftIndex]}\n")
+                append("expected[$leftIndex] = ${leftList[leftIndex].print().value}\n")
             }
         }
         if (!match.rightRange.isEmpty()) {
             for (index in 0 until match.rightRange.length()) {
                 val rightIndex = match.rightRange.start + index
-                append("actual[$rightIndex] = ${rightList[rightIndex]}\n")
+                append("actual[$rightIndex] = ${rightList[rightIndex].print().value}\n")
             }
         }
         toString()
