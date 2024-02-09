@@ -35,3 +35,17 @@ val twoApples = CountedName("apple", 2)
 val oneOrange = CountedName("orange", 1)
 val twoOranges = CountedName("orange", 2)
 val threeLemons = CountedName("lemon", 3)
+
+data class Fruit(
+   val name: String,
+   val color: String,
+   val taste: String
+)
+
+val sweetGreenApple = Fruit("apple", "green", "sweet")
+val sweetRedApple = Fruit("apple", "red", "sweet")
+val sweetGreenPear = Fruit("pear", "green", "sweet")
+val sourYellowLemon = Fruit("lemon", "yellow", "sour")
+val tartRedCherry = Fruit("cherry", "red", "tart")
+val bitterPurplePlum = Fruit("plum", "purple", "bitter")
+
