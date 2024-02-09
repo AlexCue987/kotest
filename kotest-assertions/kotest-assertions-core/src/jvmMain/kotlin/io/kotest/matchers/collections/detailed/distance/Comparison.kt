@@ -1,6 +1,5 @@
 package io.kotest.matchers.collections.detailed.distance
 
-import io.kotest.matchers.collections.detailed.PossibleMatch
 import io.kotest.matchers.collections.detailed.distance.Distance.Companion.CompleteMatch
 import io.kotest.matchers.collections.detailed.distance.Distance.Companion.CompleteMismatch
 
