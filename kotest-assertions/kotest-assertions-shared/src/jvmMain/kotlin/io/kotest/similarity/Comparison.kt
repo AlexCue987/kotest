@@ -1,5 +1,6 @@
 package io.kotest.similarity
 
+import io.kotest.assertions.print.print
 import io.kotest.similarity.Distance.Companion.CompleteMatch
 import io.kotest.similarity.Distance.Companion.CompleteMismatch
 
@@ -13,7 +14,7 @@ internal data class Match(
 ): ComparisonResult {
     val distance
        get() = CompleteMatch
-    override fun description() = "  $field = $value"
+    override fun description() = "  $field = ${value.print().value}"
 }
 
 internal data class AtomicMismatch(
@@ -22,7 +23,7 @@ internal data class AtomicMismatch(
     val actual: Any?,
     val distance: Distance = CompleteMismatch
 ): ComparisonResult {
-    override fun description() = "  $field expected: $expected, but was: $actual"
+    override fun description() = "  $field expected: ${expected.print().value}, but was: ${actual.print().value}"
 }
 
 internal data class MismatchByField(

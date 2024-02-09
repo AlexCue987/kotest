@@ -269,13 +269,14 @@ class MapMatchersTest : WordSpec() {
           |
             """.trimMargin()
          }
-         "test assertion that a map contains extra keys and finds similarities" {
+         "test assertion that a map contains extra keys and find similarities" {
             val e = shouldThrow<AssertionError> {
                mapOf(
                   sweetGreenApple to 1
                ) should containExactly(mapOf(sweetGreenPear to 1))
             }
             e.message shouldBe """
+            |
             |Expected:
             |  mapOf(Fruit(name=apple, color=green, taste=sweet) to 1)
             |should be equal to:
@@ -292,9 +293,9 @@ class MapMatchersTest : WordSpec() {
             |  but was: Fruit(name=apple, color=green, taste=sweet),
             |  distance: 0.67,
             |  fields:
-            |  name expected: pear, but was: apple
-            |  color = green
-            |  taste = sweet
+            |  name expected: "pear", but was: "apple"
+            |  color = "green"
+            |  taste = "sweet"
               """.trimMargin()
          }
          "test shouldNot assertion" {
