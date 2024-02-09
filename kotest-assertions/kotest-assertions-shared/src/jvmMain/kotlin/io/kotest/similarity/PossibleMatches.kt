@@ -4,7 +4,7 @@ actual fun<T> possibleMatchesDescription(expected: Set<T>, actual: T): String {
    val possibleMatches = closestMatches(expected, actual)
    return if(possibleMatches.isEmpty()) ""
    else {
-      "\nPossible Matches:\n${possibleMatches.joinToString("\n\n"){it.comparisonResult.description()}}"
+      "\n${possibleMatches.joinToString("\n\n"){it.comparisonResult.description()}}"
    }
 }
 

@@ -102,6 +102,12 @@ class MapContainsMatcher<K, V>(
 ) : Matcher<Map<K, V>> {
    override fun test(value: Map<K, V>): MatcherResult {
       val diff = Diff.create(value, expected, ignoreExtraMapKeys = ignoreExtraKeys)
+      val unexpectedKeys = (value.keys - expected.keys)
+      val possibleMatches = unexpectedKeys.joinToString("\n") {
+         possibleMatchesDescription(expected.keys, it)
+      }
+      val possibleMatchesDescription = if(possibleMatches.isEmpty()) ""
+      else "\nPossible matches for missing keys:\n$possibleMatches"
       val (expectMsg, negatedExpectMsg) = if (ignoreExtraKeys) {
          "should contain all of" to "should not contain all of"
       } else {
@@ -133,7 +139,7 @@ class MapContainsMatcher<K, V>(
     """.trimMargin()
       return MatcherResult(
          diff.isEmpty(),
-         { failureMsg },
+         { failureMsg + possibleMatchesDescription },
          {
             negatedFailureMsg
          })
@@ -164,11 +170,6 @@ class MapMatchesMatcher<K, V>(
       val unexpectedKeys = mutableListOf<K>()
       val mismatches = mutableListOf<Pair<K, String?>>()
       val missingKeys = expected.keys - value.keys
-      val possibleMatches = missingKeys.joinToString("\n") {
-         possibleMatchesDescription(expected.keys, it)
-      }
-      val possibleMatchesDescription = if(possibleMatches.isEmpty()) ""
-      else "\nPossible matches for missing keys:\n$possibleMatches"
 
       errorCollector.runWithMode(ErrorCollectionMode.Hard) {
          value.forEach { (k, v) ->
@@ -188,7 +189,7 @@ class MapMatchesMatcher<K, V>(
 
       return MatcherResult(
          missingKeys.isEmpty() && mismatches.isEmpty() && (ignoreExtraKeys || unexpectedKeys.isEmpty()),
-         { "Expected map to match all assertions. Missing keys were=$missingKeys, Mismatched values were=$mismatches, Unexpected keys were $unexpectedKeys.$possibleMatchesDescription" },
+         { "Expected map to match all assertions. Missing keys were=$missingKeys, Mismatched values were=$mismatches, Unexpected keys were $unexpectedKeys." },
          { "Expected map to not match all assertions." },
       )
    }
