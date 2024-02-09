@@ -188,7 +188,7 @@ class MapMatchesMatcher<K, V>(
 
       return MatcherResult(
          missingKeys.isEmpty() && mismatches.isEmpty() && (ignoreExtraKeys || unexpectedKeys.isEmpty()),
-         { "Expected map to match all assertions.\nMissing keys were=$missingKeys,\nMismatched values were=$mismatches,\nUnexpected keys were $unexpectedKeys.$possibleMatchesDescription" },
+         { "Expected map to match all assertions. Missing keys were=$missingKeys, Mismatched values were=$mismatches, Unexpected keys were $unexpectedKeys.$possibleMatchesDescription" },
          { "Expected map to not match all assertions." },
       )
    }
