@@ -7,6 +7,7 @@ import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.string.Diff
 import io.kotest.matchers.string.stringify
+import io.kotest.similarity.possibleMatchesDescription
 
 fun <K> haveKey(key: K): Matcher<Map<K, Any?>> = object : Matcher<Map<K, Any?>> {
    override fun test(value: Map<K, Any?>) = MatcherResult(
@@ -163,6 +164,11 @@ class MapMatchesMatcher<K, V>(
       val unexpectedKeys = mutableListOf<K>()
       val mismatches = mutableListOf<Pair<K, String?>>()
       val missingKeys = expected.keys - value.keys
+      val possibleMatches = missingKeys.joinToString("\n") {
+         possibleMatchesDescription(expected.keys, it)
+      }
+      val possibleMatchesDescription = if(possibleMatches.isEmpty()) ""
+      else "\nPossible matches for missing keys:\n$possibleMatches"
 
       errorCollector.runWithMode(ErrorCollectionMode.Hard) {
          value.forEach { (k, v) ->
@@ -182,8 +188,9 @@ class MapMatchesMatcher<K, V>(
 
       return MatcherResult(
          missingKeys.isEmpty() && mismatches.isEmpty() && (ignoreExtraKeys || unexpectedKeys.isEmpty()),
-         { "Expected map to match all assertions. Missing keys were=$missingKeys, Mismatched values were=$mismatches, Unexpected keys were $unexpectedKeys." },
+         { "Expected map to match all assertions.\nMissing keys were=$missingKeys,\nMismatched values were=$mismatches,\nUnexpected keys were $unexpectedKeys.$possibleMatchesDescription" },
          { "Expected map to not match all assertions." },
       )
    }
 }
+

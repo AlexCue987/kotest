@@ -1,12 +1,4 @@
-package io.kotest.matchers.collections.detailed.distance
-
-fun<T> possibleMatchesDescription(expected: Set<T>, actual: T): String {
-   val possibleMatches = closestMatches(expected, actual)
-   return if(possibleMatches.isEmpty()) ""
-   else {
-      "\nPossible Matches:\n${possibleMatches.joinToString("\n\n"){it.comparisonResult.description()}}"
-   }
-}
+package io.kotest.similarity
 
 internal fun<T> closestMatches(expected: Set<T>, actual: T): List<PairComparison<T>> {
    return expected.asSequence().mapNotNull { candidate ->
