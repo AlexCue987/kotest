@@ -1,6 +1,7 @@
 package com.sksamuel.kotest.matchers.collections
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.containsInOrder
 import io.kotest.matchers.collections.shouldContainInOrder
@@ -28,6 +29,11 @@ class InOrderTest : WordSpec() {
             shouldThrow<AssertionError> {
                col should containsInOrder(2, 1, 3)
             }
+         }
+         "reject empty expected list" {
+            shouldThrowAny {
+               listOf(5, 3, 1, 2, 4, 2) should containsInOrder(listOf<Int>())
+            }.message shouldBe "expected values must not be empty"
          }
          "work with unsorted collections" {
             val actual = listOf(5, 3, 1, 2, 4, 2)
