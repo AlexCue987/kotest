@@ -5,6 +5,7 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.containsInOrder
 import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 
 class InOrderTest : WordSpec() {
@@ -18,11 +19,11 @@ class InOrderTest : WordSpec() {
 
             shouldThrow<AssertionError> {
                col should containsInOrder(1, 2, 6)
-            }
+            }.message shouldBe "[1, 1, 2, 2, 3, 3] did not contain the elements [1, 2, 6] in order, could not match element 6 at index 2"
 
             shouldThrow<AssertionError> {
                col should containsInOrder(4)
-            }
+            }.message shouldBe "[1, 1, 2, 2, 3, 3] did not contain the elements [4] in order, could not match element 4 at index 0"
 
             shouldThrow<AssertionError> {
                col should containsInOrder(2, 1, 3)
@@ -35,7 +36,7 @@ class InOrderTest : WordSpec() {
          "print errors unambiguously"  {
             shouldThrow<AssertionError> {
                listOf<Number>(1L, 2L) should containsInOrder(listOf<Number>(1, 2))
-            }.shouldHaveMessage("""[1L, 2L] did not contain the elements [1, 2] in order""")
+            }.shouldHaveMessage("""[1L, 2L] did not contain the elements [1, 2] in order, could not match element 1 at index 0""")
          }
          "support iterables with vararg" {
             val actual = listOf(1, 2, 3, 4, 5).asIterable()
