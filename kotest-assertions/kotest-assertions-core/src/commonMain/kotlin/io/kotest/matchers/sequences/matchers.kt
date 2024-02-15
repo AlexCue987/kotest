@@ -175,6 +175,8 @@ fun <T, C : Sequence<T>> containAllInAnyOrder(expected: C): Matcher<C?> = neverN
    )
 }
 
+internal fun<T> List<T>.counted(): Map<T, Int> = this.groupingBy { it }.eachCount()
+
 infix fun <T : Comparable<T>, C : Sequence<T>> C.shouldHaveUpperBound(t: T) = this should haveUpperBound(t)
 
 fun <T : Comparable<T>, C : Sequence<T>> haveUpperBound(t: T) = object : Matcher<C> {
