@@ -939,16 +939,20 @@ class SequenceMatchersTest : WordSpec() {
             sampleData.single.shouldHaveLowerBound(0)
          }
 
-         fail("for single with wrong bound") {
-            sampleData.single.shouldHaveLowerBound(1)
+         "fail for single with wrong bound" {
+            shouldThrowAny {
+               sampleData.single.shouldHaveLowerBound(1)
+            }.shouldHaveMessage("Sequence should have lower bound 1, but element at index 0 was: 0")
          }
 
          succeed("for multiple") {
             sampleData.countup.shouldHaveLowerBound(sampleData.countup.minOrNull() ?: Int.MIN_VALUE)
          }
 
-         fail("for multiple with wrong bound") {
-            sampleData.countup.shouldHaveLowerBound((sampleData.countup.minOrNull() ?: Int.MIN_VALUE) + 1)
+         "fail for multiple with wrong bound" {
+            shouldThrowAny {
+               sampleData.countup.shouldHaveLowerBound((sampleData.countup.minOrNull() ?: Int.MIN_VALUE) + 1)
+            }.shouldHaveMessage("Sequence should have lower bound 1, but element at index 0 was: 0")
          }
       }
 

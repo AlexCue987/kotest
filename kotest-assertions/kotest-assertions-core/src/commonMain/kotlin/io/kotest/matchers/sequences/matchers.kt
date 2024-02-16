@@ -194,11 +194,17 @@ fun <T : Comparable<T>, C : Sequence<T>> haveUpperBound(t: T) = object : Matcher
 infix fun <T : Comparable<T>, C : Sequence<T>> C.shouldHaveLowerBound(t: T) = this should haveLowerBound(t)
 
 fun <T : Comparable<T>, C : Sequence<T>> haveLowerBound(t: T) = object : Matcher<C> {
-   override fun test(value: C) = MatcherResult(
-      (value.minOrNull() ?: t) >= t,
-      { "Sequence should have lower bound $t" },
-      { "Sequence should not have lower bound $t" }
-   )
+   override fun test(value: C): MatcherResult {
+      val elementBelowLowerBound = value.withIndex().firstOrNull { it.value < t }
+      val elementBelowLowerBoundStr = elementBelowLowerBound?.let {
+         ", but element at index ${it.index} was: ${it.value.print().value}"
+      } ?: ""
+      return MatcherResult(
+         elementBelowLowerBound == null,
+         { "Sequence should have lower bound $t$elementBelowLowerBoundStr" },
+         { "Sequence should not have lower bound $t" }
+      )
+   }
 }
 
 fun <T> Sequence<T>.shouldBeUnique() = this should beUnique()
