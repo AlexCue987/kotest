@@ -178,11 +178,17 @@ fun <T, C : Sequence<T>> containAllInAnyOrder(expected: C): Matcher<C?> = neverN
 infix fun <T : Comparable<T>, C : Sequence<T>> C.shouldHaveUpperBound(t: T) = this should haveUpperBound(t)
 
 fun <T : Comparable<T>, C : Sequence<T>> haveUpperBound(t: T) = object : Matcher<C> {
-   override fun test(value: C) = MatcherResult(
-      (value.maxOrNull() ?: t) <= t,
-      { "Sequence should have upper bound $t" },
-      { "Sequence should not have upper bound $t" }
-   )
+   override fun test(value: C): MatcherResult {
+      val elementAboveUpperBound = value.withIndex().firstOrNull { it.value > t }
+      val elementAboveUpperBoundStr = elementAboveUpperBound?.let {
+         ", but element at index ${it.index} was: ${it.value.print().value}"
+      } ?: ""
+      return MatcherResult(
+         elementAboveUpperBound == null,
+         { "Sequence should have upper bound $t$elementAboveUpperBoundStr" },
+         { "Sequence should not have upper bound $t" }
+      )
+   }
 }
 
 infix fun <T : Comparable<T>, C : Sequence<T>> C.shouldHaveLowerBound(t: T) = this should haveLowerBound(t)
