@@ -3,6 +3,7 @@ package io.kotest.similarity
 import io.kotest.assertions.print.print
 import io.kotest.similarity.Distance.Companion.CompleteMatch
 import io.kotest.similarity.Distance.Companion.CompleteMismatch
+import java.math.BigDecimal
 
 internal sealed interface ComparisonResult {
     val match: Boolean
