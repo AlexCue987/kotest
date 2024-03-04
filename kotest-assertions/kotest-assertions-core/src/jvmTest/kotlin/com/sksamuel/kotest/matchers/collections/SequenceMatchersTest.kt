@@ -755,8 +755,6 @@ class SequenceMatchersTest : WordSpec() {
          }
 
          succeed("for subset, same count with nulls") {
-            val a = sampleData.sparse.toList()
-            val b = sampleData.nulls.toList()
             sampleData.sparse.shouldNotContainAllInAnyOrder(sampleData.nulls)
          }
 
