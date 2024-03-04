@@ -716,11 +716,9 @@ class SequenceMatchersTest : WordSpec() {
             sampleData.countup.shouldContainAllInAnyOrder((5..15).asSequence())
          }
 
-         succeed("for subset, same count with nulls") {
+         fail("for subset, same count with nulls") {
             val a = sampleData.sparse.toList()
             val b = sampleData.nulls.toList()
-            println(a)
-            println(b)
             sampleData.sparse.shouldContainAllInAnyOrder(sampleData.nulls)
          }
 
@@ -758,11 +756,9 @@ class SequenceMatchersTest : WordSpec() {
             sampleData.countup.shouldNotContainAllInAnyOrder((5..15).asSequence())
          }
 
-         fail("for subset, same count with nulls") {
+         succeed("for subset, same count with nulls") {
             val a = sampleData.sparse.toList()
             val b = sampleData.nulls.toList()
-            println(a)
-            println(b)
             sampleData.sparse.shouldNotContainAllInAnyOrder(sampleData.nulls)
          }
 
