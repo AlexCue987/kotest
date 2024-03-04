@@ -30,7 +30,7 @@ internal data class UnorderedCollectionsDifference<T>(
    ) {
       override fun toString(): String {
          return if (elements.isEmpty()) "" else
-             "$description: \n${elements.joinToString("\n") { it.print().value }}"
+             "$description:\n${elements.joinToString("\n") { it.print().value }}"
       }
    }
 
@@ -60,5 +60,7 @@ internal data class UnorderedCollectionsDifference<T>(
       init {
          require(expectedCount != actualCount) { "Expected count should be different from actual, but both were: $expectedCount" }
       }
+
+      override fun toString(): String = "  For ${value.print().value}: expected count: <$expectedCount>, but was: <$actualCount>"
    }
 }
