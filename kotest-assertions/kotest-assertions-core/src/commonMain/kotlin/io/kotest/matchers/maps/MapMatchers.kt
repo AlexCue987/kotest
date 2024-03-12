@@ -103,11 +103,7 @@ class MapContainsMatcher<K, V>(
    override fun test(value: Map<K, V>): MatcherResult {
       val diff = Diff.create(value, expected, ignoreExtraMapKeys = ignoreExtraKeys)
       val unexpectedKeys = (value.keys - expected.keys)
-      val possibleMatches = unexpectedKeys.joinToString("\n") {
-         possibleMatchesDescription(expected.keys, it)
-      }
-      val possibleMatchesDescription = if(possibleMatches.isEmpty()) ""
-      else "\nPossible matches for missing keys:\n$possibleMatches"
+      val possibleMatchesDescription = possibleMatchesForMissingElements(unexpectedKeys, expected.keys, "keys")
       val (expectMsg, negatedExpectMsg) = if (ignoreExtraKeys) {
          "should contain all of" to "should not contain all of"
       } else {
@@ -145,6 +141,19 @@ class MapContainsMatcher<K, V>(
          })
    }
 }
+
+internal fun <K> possibleMatchesForMissingElements(
+   unexpected: Set<K>,
+   expected: Set<K>,
+   elementTypeDescription: String
+): String {
+   val possibleMatches = unexpected.joinToString("\n") {
+      possibleMatchesDescription(expected, it)
+   }
+   return if (possibleMatches.isEmpty()) ""
+   else "\nPossible matches for missing $elementTypeDescription:\n$possibleMatches"
+}
+
 
 fun <K, V> matchAll(
    vararg matchers: Pair<K, (V) -> Unit>
