@@ -55,6 +55,23 @@ class MapMatchersTest : WordSpec() {
                map.shouldContainValue("c")
             }.message.shouldBe("Map should contain value c")
          }
+         "find similarities for values not found" {
+            shouldThrow<AssertionError> {
+               mapOf(
+                  1 to sweetGreenApple,
+                  2 to sweetRedApple,
+                  3 to sourYellowLemon
+               ).shouldContainValue(sweetGreenPear)
+            }.message.shouldBe("""
+            |Map should contain value Fruit(name=pear, color=green, taste=sweet)
+            |Possible matches for missing value:
+            |
+            | expected: Fruit(name=apple, color=green, taste=sweet),
+            |  but was: Fruit(name=pear, color=green, taste=sweet),
+            |  The following fields did not match:
+            |    "name" expected: <"apple">, but was: <"pear">
+            """.trimMargin())
+         }
       }
 
       "contain" should {
@@ -134,7 +151,6 @@ class MapMatchersTest : WordSpec() {
             |    "name" expected: <"apple">, but was: <"pear">
             """.trimMargin())
          }
-
       }
 
       "containAnyKeys" should {
