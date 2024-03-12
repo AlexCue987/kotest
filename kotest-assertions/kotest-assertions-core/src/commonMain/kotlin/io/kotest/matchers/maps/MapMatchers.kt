@@ -10,11 +10,21 @@ import io.kotest.matchers.string.stringify
 import io.kotest.similarity.possibleMatchesDescription
 
 fun <K> haveKey(key: K): Matcher<Map<K, Any?>> = object : Matcher<Map<K, Any?>> {
-   override fun test(value: Map<K, Any?>) = MatcherResult(
-      value.containsKey(key),
-      { "Map should contain key $key" },
-      { "Map should not contain key $key" }
-   )
+   override fun test(value: Map<K, Any?>): MatcherResult {
+      val passed = value.containsKey(key)
+      val possibleMatchesDescription = if(passed) "" else
+         possibleMatchesForMissingElements(
+         setOf(key),
+         value.keys,
+         "key"
+      )
+
+      return MatcherResult(
+         passed,
+         { "Map should contain key $key$possibleMatchesDescription" },
+         { "Map should not contain key $key" }
+      )
+   }
 }
 
 fun <K> haveKeys(vararg keys: K): Matcher<Map<K, Any?>> = object : Matcher<Map<K, Any?>> {
@@ -153,9 +163,12 @@ internal fun <K> possibleMatchesForMissingElements(
    expected: Set<K>,
    elementTypeDescription: String
 ): String {
-   val possibleMatches = unexpected.joinToString("\n") {
-      possibleMatchesDescription(expected, it)
-   }
+   val possibleMatches = unexpected.
+      map {
+         possibleMatchesDescription(expected, it)
+      }.filter {
+         it.isNotEmpty()
+   }.joinToString("\n")
    return if (possibleMatches.isEmpty()) ""
    else "\nPossible matches for missing $elementTypeDescription:\n$possibleMatches"
 }
