@@ -131,9 +131,10 @@ fun <T, C : Collection<T>> containExactlyInAnyOrder(
       expected.any { verifier?.verify(it, t)?.areEqual() ?: (t == it) }
    }
    val countMismatch = countMismatch(expectedGroupedCounts, valueGroupedCounts)
-   val possibleMatches = extra.joinToString("\n") {
-      possibleMatchesDescription(expected.toSet(), it)
-   }
+   val possibleMatches = extra
+      .map { possibleMatchesDescription(expected.toSet(), it) }
+      .filter { it.isNotEmpty() }
+      .joinToString("\n")
 
    val failureMessage = {
       buildString {
