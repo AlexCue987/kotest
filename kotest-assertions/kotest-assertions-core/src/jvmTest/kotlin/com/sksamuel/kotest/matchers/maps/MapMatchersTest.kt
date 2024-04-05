@@ -60,7 +60,7 @@ class MapMatchersTest : WordSpec() {
       "contain" should {
          "test that a map contains the given pair" {
             val map = mapOf(Pair(1, "a"), Pair(2, "b"))
-            map should contain(1, "a")
+            map shouldContain(1 to "a")
             map.shouldContain(2, "b")
             map.shouldNotContain(3, "A")
             map shouldContain (1 to "a")
@@ -72,7 +72,7 @@ class MapMatchersTest : WordSpec() {
                map.shouldContain(4, "e")
             }.message.shouldBe("Map should contain mapping 4=e but key was not in the map")
             shouldThrow<AssertionError> {
-               map should contain(2, "a")
+               map shouldContain(2 to "a")
             }.message.shouldBe("Map should contain mapping 2=a but was 2=b")
          }
          "fail for key not in map and null value" {
