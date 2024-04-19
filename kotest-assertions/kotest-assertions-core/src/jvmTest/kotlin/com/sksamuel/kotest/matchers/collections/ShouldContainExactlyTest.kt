@@ -3,6 +3,7 @@ package com.sksamuel.kotest.matchers.collections
 import io.kotest.assertions.shouldFailWithMessage
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.equals.Equality
 import io.kotest.matchers.collections.CountMismatch
 import io.kotest.matchers.collections.containExactly
 import io.kotest.matchers.collections.containExactlyInAnyOrder
@@ -370,12 +371,13 @@ class ShouldContainExactlyTest : WordSpec() {
       "countMismatch" should {
          "return empty list for a complete match" {
             val counts = mapOf("apple" to 1, "orange" to 2)
-            countMismatch(counts, counts).shouldBeEmpty()
+            countMismatch(counts, counts, Equality.default()).shouldBeEmpty()
          }
          "return differences for not null key" {
             countMismatch(
                mapOf("apple" to 1, "orange" to 2, "banana" to 3),
-               mapOf("apple" to 2, "orange" to 2, "peach" to 1)
+               mapOf("apple" to 2, "orange" to 2, "peach" to 1),
+               Equality.default()
             ) shouldBe listOf(
                CountMismatch("apple", 1, 2)
             )
@@ -383,7 +385,8 @@ class ShouldContainExactlyTest : WordSpec() {
          "return differences for null key" {
             countMismatch(
                mapOf(null to 1, "orange" to 2, "banana" to 3),
-               mapOf(null to 2, "orange" to 2, "peach" to 1)
+               mapOf(null to 2, "orange" to 2, "peach" to 1),
+               Equality.default()
             ) shouldBe listOf(
                CountMismatch(null, 1, 2)
             )

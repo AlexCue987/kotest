@@ -1,6 +1,7 @@
 package io.kotest.matchers.collections
 
 import io.kotest.assertions.print.print
+import io.kotest.equals.CommutativeEquality
 import io.kotest.equals.Equality
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
@@ -129,7 +130,7 @@ fun <T, C : Collection<T>> containExactlyInAnyOrder(
    val extra = actual.filterNot { t ->
       expected.any { verifier?.verify(it, t)?.areEqual() ?: (t == it) }
    }
-   val countMismatch = countMismatch(expectedGroupedCounts, valueGroupedCounts)
+   val countMismatch = countMismatch(expectedGroupedCounts, valueGroupedCounts, verifier)
 
    val failureMessage = {
       buildString {
@@ -154,14 +155,33 @@ fun <T, C : Collection<T>> containExactlyInAnyOrder(
    )
 }
 
-internal fun<T> countMismatch(expectedCounts: Map<T, Int>, actualCounts: Map<T, Int>) =
-   actualCounts.entries.mapNotNull { actualEntry ->
-      expectedCounts[actualEntry.key]?.let { expectedValue ->
-         if(actualEntry.value != expectedValue)
+internal fun<T> countMismatch(
+   expectedCounts: Map<T, Int>,
+   actualCounts: Map<T, Int>,
+   verifier: Equality<T>?
+): List<CountMismatch<T>> {
+   if(verifier == null) {
+      return actualCounts.entries.mapNotNull { actualEntry ->
+         expectedCounts[actualEntry.key]?.let { expectedValue ->
+            if (actualEntry.value != expectedValue)
+               CountMismatch(actualEntry.key, expectedValue, actualEntry.value)
+            else null
+         }
+      }
+   }
+   val commutativeVerifier = CommutativeEquality(verifier)
+   return actualCounts.entries.mapNotNull { actualEntry ->
+      val equalKeyInExpected =
+         expectedCounts.keys.firstOrNull { expectedKey ->
+            commutativeVerifier.verify(expectedKey, actualEntry.key).areEqual()
+         } ?: actualEntry.key
+      expectedCounts[equalKeyInExpected]?.let { expectedValue ->
+         if (actualEntry.value != expectedValue)
             CountMismatch(actualEntry.key, expectedValue, actualEntry.value)
          else null
       }
    }
+}
 
 internal data class CountMismatch<T>(val key: T, val expectedCount: Int, val actualCount: Int) {
    init {
