@@ -3,6 +3,7 @@ package io.kotest.matchers.collections
 import io.kotest.assertions.print.print
 import io.kotest.equals.CommutativeEquality
 import io.kotest.equals.Equality
+import io.kotest.equals.countByEquality
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.neverNullMatcher
@@ -116,8 +117,8 @@ fun <T, C : Collection<T>> containExactlyInAnyOrder(
    verifier: Equality<T>?,
 ): Matcher<C?> = neverNullMatcher { actual ->
 
-   val valueGroupedCounts: Map<T, Int> = getGroupedCount(actual)
-   val expectedGroupedCounts: Map<T, Int> = getGroupedCount(expected)
+   val valueGroupedCounts: Map<T, Int> = getGroupedCount(actual, verifier)
+   val expectedGroupedCounts: Map<T, Int> = getGroupedCount(expected, verifier)
 
    val passed = expectedGroupedCounts.size == valueGroupedCounts.size
       && expectedGroupedCounts.all { (k, v) ->
@@ -155,7 +156,12 @@ fun <T, C : Collection<T>> containExactlyInAnyOrder(
    )
 }
 
-private fun <C : Collection<T>, T> getGroupedCount(actual: C) = actual.groupBy { it }.mapValues { it.value.size }
+private fun <C : Collection<T>, T> getGroupedCount(actual: C, verifier: Equality<T>?) =
+   if(verifier == null) {
+      actual.groupBy { it }.mapValues { it.value.size }
+   } else {
+      actual.countByEquality(verifier)
+   }
 
 internal fun<T> countMismatch(
    expectedCounts: Map<T, Int>,
