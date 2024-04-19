@@ -120,11 +120,6 @@ fun <T, C : Collection<T>> containExactlyInAnyOrder(
    val valueGroupedCounts: Map<T, Int> = getGroupedCount(actual, verifier)
    val expectedGroupedCounts: Map<T, Int> = getGroupedCount(expected, verifier)
 
-   val passed = expectedGroupedCounts.size == valueGroupedCounts.size
-      && expectedGroupedCounts.all { (k, v) ->
-      valueGroupedCounts.filterKeys { verifier?.verify(k, it)?.areEqual() ?: (k == it) }[k] == v
-   }
-
    val missing = expected.filterNot { t ->
       actual.any { verifier?.verify(it, t)?.areEqual() ?: (t == it) }
    }
@@ -132,6 +127,7 @@ fun <T, C : Collection<T>> containExactlyInAnyOrder(
       expected.any { verifier?.verify(it, t)?.areEqual() ?: (t == it) }
    }
    val countMismatch = countMismatch(expectedGroupedCounts, valueGroupedCounts, verifier)
+   val passed = missing.isEmpty() && extra.isEmpty() && countMismatch.isEmpty()
 
    val failureMessage = {
       buildString {

@@ -4,6 +4,7 @@ import io.kotest.assertions.shouldFailWithMessage
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.equals.Equality
+import io.kotest.equals.EqualityResult
 import io.kotest.matchers.collections.CountMismatch
 import io.kotest.matchers.collections.containExactly
 import io.kotest.matchers.collections.containExactlyInAnyOrder
@@ -365,6 +366,20 @@ class ShouldContainExactlyTest : WordSpec() {
             checkAll(1000, Arb.shuffle(listOf("1", "2", "3", "4", "5", "6", "7"))) {
                it shouldContainExactlyInAnyOrder listOf("1", "2", "3", "4", "5", "6", "7")
             }
+         }
+
+         "use custom verifier correctly" {
+            val caseInsensitiveStringEquality: Equality<String> = object : Equality<String> {
+               override fun name() = "Case Insensitive String Matcher"
+
+               override fun verify(actual: String, expected: String): EqualityResult {
+                  return if(actual.uppercase() == expected.uppercase())
+                     EqualityResult.equal(actual, expected, this)
+                  else
+                     EqualityResult.notEqual(actual, expected, this)
+               }
+            }
+            listOf("apple", "orange", "Apple") should containExactlyInAnyOrder(listOf("APPLE", "APPLE", "Orange"), caseInsensitiveStringEquality)
          }
       }
 
