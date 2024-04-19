@@ -116,8 +116,8 @@ fun <T, C : Collection<T>> containExactlyInAnyOrder(
    verifier: Equality<T>?,
 ): Matcher<C?> = neverNullMatcher { actual ->
 
-   val valueGroupedCounts: Map<T, Int> = actual.groupBy { it }.mapValues { it.value.size }
-   val expectedGroupedCounts: Map<T, Int> = expected.groupBy { it }.mapValues { it.value.size }
+   val valueGroupedCounts: Map<T, Int> = getGroupedCount(actual)
+   val expectedGroupedCounts: Map<T, Int> = getGroupedCount(expected)
 
    val passed = expectedGroupedCounts.size == valueGroupedCounts.size
       && expectedGroupedCounts.all { (k, v) ->
@@ -154,6 +154,8 @@ fun <T, C : Collection<T>> containExactlyInAnyOrder(
       negatedFailureMessage
    )
 }
+
+private fun <C : Collection<T>, T> getGroupedCount(actual: C) = actual.groupBy { it }.mapValues { it.value.size }
 
 internal fun<T> countMismatch(
    expectedCounts: Map<T, Int>,
