@@ -54,21 +54,24 @@ inline fun <reified T> containJsonKeyValue(path: String, t: T) = object : Matche
          if (value.length < 50) value.trim()
          else value.substring(0, 50).trim() + "..."
 
-      val actualKeyValue = extractKey(value)
-      val passed = t == actualKeyValue
-      if (!passed && actualKeyValue == null) return keyIsAbsentFailure()
-
-      return MatcherResult(
-         passed,
-         { "Value mismatch at '$path': ${intellijFormatError(Expected(t.print()), Actual(actualKeyValue.print()))}" },
-         {
-            "$sub should not contain the element $path = $t"
-         }
-      )
+      when(val actualKeyValue = extractByPath<T>(json = value, path = path)) {
+          is ExtractedValue<*> -> {
+             val actualValue = actualKeyValue.value
+             val passed = t == actualValue
+             return MatcherResult(
+                passed,
+                { "Value mismatch at '$path': ${intellijFormatError(Expected(t.print()), Actual(actualValue.print()))}" },
+                {
+                   "$sub should not contain the element $path = $t"
+                }
+             )
+          }
+          is JsonPathNotFound -> return keyIsAbsentFailure()
+      }
    }
 }
 
-internal inline fun<reified T> extractByPath(json: String?, path: String): ExtractValueOutcome {
+inline fun<reified T> extractByPath(json: String?, path: String): ExtractValueOutcome {
    val parsedJson = JsonPath.parse(json)
    return try {
       val extractedValue = parsedJson.read(path, T::class.java)
@@ -80,7 +83,7 @@ internal inline fun<reified T> extractByPath(json: String?, path: String): Extra
    }
 }
 
-internal inline fun findValidSubPath(json: String?, path: String): String? {
+inline fun findValidSubPath(json: String?, path: String): String? {
    val parsedJson = JsonPath.parse(json)
    var subPath = path
    while(subPath.isNotEmpty() && subPath != "$") {
@@ -94,15 +97,15 @@ internal inline fun findValidSubPath(json: String?, path: String): String? {
    return null
 }
 
-internal fun removeLastPartFromPath(path: String): String {
+fun removeLastPartFromPath(path: String): String {
    val tokens = path.split(".")
    return tokens.take(tokens.size - 1).joinToString(".")
 }
 
-internal sealed interface ExtractValueOutcome
+sealed interface ExtractValueOutcome
 
-internal data class ExtractedValue<T>(
+data class ExtractedValue<T>(
    val value: T
 ): ExtractValueOutcome
 
-internal object JsonPathNotFound : ExtractValueOutcome
+object JsonPathNotFound : ExtractValueOutcome

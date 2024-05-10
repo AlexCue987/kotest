@@ -23,16 +23,19 @@ class ExtractByPathTest: WordSpec() {
                 "degrees": 320,
                 "unit": "F"
             }
-          }
+          },
+          "comments": null
       }
    """.trimIndent()
 
    init {
       "extractByPath" should {
-         "find by valid path" {
+         "find not null value by valid path" {
             extractByPath<String>(json, "$.regime.temperature.unit") shouldBe ExtractedValue("F")
          }
-
+         "find null value by valid path" {
+            extractByPath<String>(json, "$.comments") shouldBe ExtractedValue(null)
+         }
          "path not found" {
             extractByPath<String>(json, "$.regime.temperature.unit.name") shouldBe JsonPathNotFound
          }
