@@ -31,7 +31,8 @@ class ContainJsonKeyValueTest : StringSpec({
               "bicycle": {
                  "color": "red",
                  "price": 19.95,
-                 "code": 1
+                 "code": 1,
+                 "weight": null
               }
          }
       }
@@ -69,6 +70,7 @@ class ContainJsonKeyValueTest : StringSpec({
       json.shouldContainJsonKeyValue("$.store.book[1].author", "Evelyn Waugh")
       json.shouldContainJsonKeyValue("$.store.book[1].author", "Evelyn Waugh")
       json.shouldContainJsonKeyValue("$.store.bicycle.code", 1L)
+      json.shouldContainJsonKeyValue<Int?>("$.store.bicycle.weight", null)
 
       json.shouldNotContainJsonKeyValue("$.store.book[1].author", "JK Rowling")
 

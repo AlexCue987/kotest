@@ -25,9 +25,9 @@ inline fun <reified T> String.shouldNotContainJsonKeyValue(path: String, value: 
    this shouldNot containJsonKeyValue(path, value)
 
 inline fun <reified T> containJsonKeyValue(path: String, t: T) = object : Matcher<String?> {
-   private fun keyIsAbsentFailure() = MatcherResult(
+   private fun keyIsAbsentFailure(validSubPathDescription: String) = MatcherResult(
       false,
-      { "Expected given to contain json key <'$path'> but key was not found." },
+      { "Expected given to contain json key <'$path'> but key was not found.$validSubPathDescription" },
       { "Expected given to not contain json key <'$path'> but key was found." }
    )
 
@@ -66,7 +66,12 @@ inline fun <reified T> containJsonKeyValue(path: String, t: T) = object : Matche
                 }
              )
           }
-          is JsonPathNotFound -> return keyIsAbsentFailure()
+          is JsonPathNotFound -> {
+             val validSubPathDescription = findValidSubPath(value, path)?.let { subpath ->
+                " Found shorter valid subpath: $subpath"
+             } ?: ""
+             return keyIsAbsentFailure(validSubPathDescription)
+          }
       }
    }
 }
