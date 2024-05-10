@@ -55,6 +55,14 @@ class ContainJsonKeyValueTest : StringSpec({
       """.trimIndent()
    }
 
+   "Failure message states if key is missing, shows valid subpath" {
+      shouldFail {
+         json.shouldContainJsonKeyValue("$.store.bicycle.engine", "V2")
+      }.message shouldBe """
+         Expected given to contain json key <'$.store.bicycle.engine'> but key was not found. Found shorter valid subpath: <'$.store.bicycle'>
+      """.trimIndent()
+   }
+
    "Failure message states states value mismatch if key is present with different value" {
       shouldFail {
          json.shouldContainJsonKeyValue("$.store.book[0].price", 9.95)
