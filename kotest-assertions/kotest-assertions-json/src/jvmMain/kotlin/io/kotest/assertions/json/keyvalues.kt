@@ -67,3 +67,23 @@ inline fun <reified T> containJsonKeyValue(path: String, t: T) = object : Matche
       )
    }
 }
+
+internal inline fun<reified T> extractByPath(json: String?, path: String): ExtractValueOutcome {
+   val parsedJson = JsonPath.parse(json)
+   return try {
+      val extractedValue = parsedJson.read(path, T::class.java)
+      ExtractedValue(extractedValue)
+   } catch (e: PathNotFoundException) {
+      JsonPathNotFound
+   } catch (e: InvalidPathException) {
+      throw AssertionError("$path is not a valid JSON path")
+   }
+}
+
+internal sealed interface ExtractValueOutcome
+
+internal data class ExtractedValue<T>(
+   val value: T
+): ExtractValueOutcome
+
+internal object JsonPathNotFound : ExtractValueOutcome
