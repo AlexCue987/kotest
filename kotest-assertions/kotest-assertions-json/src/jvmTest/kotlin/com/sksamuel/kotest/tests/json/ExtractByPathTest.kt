@@ -26,6 +26,12 @@ class ExtractByPathTest: WordSpec() {
                 "unit": "F"
             }
           },
+          "steps": [
+            {
+               "name": "Boil",
+               "comments": ["Heat on 3", "No lid"]
+            }
+          ],
           "comments": null
       }
    """.trimIndent()
@@ -34,6 +40,9 @@ class ExtractByPathTest: WordSpec() {
       "extractByPath" should {
          "find not null value by valid path" {
             extractByPath<String>(json, "$.regime.temperature.unit") shouldBe ExtractedValue("F")
+         }
+         "find not null value by valid path in array" {
+            extractByPath<String>(json, "$.steps[0].comments[1]") shouldBe ExtractedValue("No lid")
          }
          "find null value by valid path" {
             extractByPath<String>(json, "$.comments") shouldBe ExtractedValue(null)
@@ -49,6 +58,13 @@ class ExtractByPathTest: WordSpec() {
             removeLastPartFromPath("$.regime.temperature.unit") shouldBe "$.regime.temperature"
             removeLastPartFromPath("$.regime.temperature") shouldBe "$.regime"
             removeLastPartFromPath("$.regime") shouldBe "$"
+         }
+         "decrement positive index" {
+            removeLastPartFromPath("$.ingredients[3]") shouldBe "$.ingredients[2]"
+            removeLastPartFromPath("$.steps[0].comments[2]") shouldBe "$.steps[0].comments[1]"
+         }
+         "not decrement zero index" {
+            removeLastPartFromPath("$.ingredients[0]") shouldBe "$"
          }
       }
 
@@ -75,6 +91,7 @@ class ExtractByPathTest: WordSpec() {
              findValidSubPath(json, "$.regime.temperature.unit.name") shouldBe "$.regime.temperature.unit"
              findValidSubPath(json, "$.regime.temperature.name") shouldBe "$.regime.temperature"
              findValidSubPath(json, "$.regime.no_such_element") shouldBe "$.regime"
+             findValidSubPath(json, "$.steps[0].comments[2]") shouldBe "$.steps[0].comments[1]"
           }
          "return null when nothing found" {
             findValidSubPath(json, "$.no.such.path") shouldBe null

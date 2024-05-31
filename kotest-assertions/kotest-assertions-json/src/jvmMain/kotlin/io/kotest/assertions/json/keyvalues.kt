@@ -69,7 +69,7 @@ inline fun <reified T> containJsonKeyValue(path: String, t: T) = object : Matche
           }
           is JsonPathNotFound -> {
              val validSubPathDescription = findValidSubPath(value, path)?.let { subpath ->
-                " Found shorter valid subpath: <'$subpath'>"
+                " Found valid path: <'$subpath'>"
              } ?: ""
              return keyIsAbsentFailure(validSubPathDescription)
           }
@@ -108,7 +108,12 @@ inline fun findValidSubPath(json: String?, path: String): String? {
 @KotestInternal
 fun removeLastPartFromPath(path: String): String {
    val tokens = path.split(".")
-   return tokens.take(tokens.size - 1).joinToString(".")
+   return tokens.mapIndexedNotNull { index, token ->
+      when {
+         index < tokens.size - 1 -> token
+         else -> decrementIndexOfJsonArray(token)
+      }
+   }.joinToString(".")
 }
 
 @KotestInternal
