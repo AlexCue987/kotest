@@ -2,10 +2,12 @@ package com.sksamuel.kotest.tests.json
 
 import io.kotest.assertions.json.ExtractedValue
 import io.kotest.assertions.json.JsonPathNotFound
+import io.kotest.assertions.json.decrementIndexOfJsonArray
 import io.kotest.assertions.json.extractByPath
 import io.kotest.assertions.json.findValidSubPath
 import io.kotest.assertions.json.removeLastPartFromPath
 import io.kotest.core.spec.style.WordSpec
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import org.intellij.lang.annotations.Language
 
@@ -47,6 +49,23 @@ class ExtractByPathTest: WordSpec() {
             removeLastPartFromPath("$.regime.temperature.unit") shouldBe "$.regime.temperature"
             removeLastPartFromPath("$.regime.temperature") shouldBe "$.regime"
             removeLastPartFromPath("$.regime") shouldBe "$"
+         }
+      }
+
+      "decrementIndexOfJsonArray" should {
+         "return null for anything that is not an indexed name" {
+            decrementIndexOfJsonArray("color").shouldBeNull()
+            decrementIndexOfJsonArray("color[").shouldBeNull()
+            decrementIndexOfJsonArray("color[123").shouldBeNull()
+            decrementIndexOfJsonArray("color[red]").shouldBeNull()
+            decrementIndexOfJsonArray("color[12][3]").shouldBeNull()
+         }
+         "return subPath with decremented index" {
+            decrementIndexOfJsonArray("color[2]") shouldBe "color[1]"
+            decrementIndexOfJsonArray("color[1]") shouldBe "color[0]"
+         }
+         "return null if index cannot be decremented" {
+            decrementIndexOfJsonArray("color[0]").shouldBeNull()
          }
       }
 

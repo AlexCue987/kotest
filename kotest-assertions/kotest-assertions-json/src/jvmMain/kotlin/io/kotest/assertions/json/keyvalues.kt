@@ -112,6 +112,24 @@ fun removeLastPartFromPath(path: String): String {
 }
 
 @KotestInternal
+fun decrementIndexOfJsonArray(pathElement: String): String? {
+   val tokens = pathElement.split("[")
+   when {
+      pathElement.last() != ']' -> return null
+      tokens.size != 2 -> return null
+      else -> {
+         val possibleNumber = tokens[1].takeWhile { it != ']' }
+         possibleNumber.toIntOrNull()?.let {
+            if(it > 0) {
+               return "${tokens[0]}[${it - 1}]"
+            }
+         }
+      }
+   }
+   return null
+}
+
+@KotestInternal
 sealed interface ExtractValueOutcome
 
 @KotestInternal
@@ -121,3 +139,23 @@ data class ExtractedValue<T>(
 
 @KotestInternal
 object JsonPathNotFound : ExtractValueOutcome
+
+//@KotestInternal
+//sealed interface SubPathSearchOutcome
+//
+//@KotestInternal
+//fun decreaseJsonArrayIndex
+//
+//@KotestInternal
+//data class SubPath(val subPath: String): SubPathSearchOutcome
+//
+//@KotestInternal
+//data class SubPathArrayIndexTooHigh(
+//   val indexTooHigh: Int,
+//   val arrayLength: Int,
+//   val subPath: String
+//): SubPathSearchOutcome
+//
+//@KotestInternal
+//object SubPathNotFound: SubPathSearchOutcome
+//
