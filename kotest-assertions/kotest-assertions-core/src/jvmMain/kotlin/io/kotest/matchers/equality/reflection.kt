@@ -638,12 +638,12 @@ internal fun comparisonToUse(
 ): FieldComparison = when {
    actual == null || expected == null -> FieldComparison.DEFAULT
    isEnum(expected) || isEnum(actual) -> FieldComparison.DEFAULT
-   typeIsJavaOrKotlinBuiltIn(expected) || typeIsJavaOrKotlinBuiltIn(actual) -> FieldComparison.DEFAULT
-   useDefaultEqualForFields.contains(expected::class.java.canonicalName) ||
-      useDefaultEqualForFields.contains(actual::class.java.canonicalName) -> FieldComparison.DEFAULT
    (expected is List<*> && actual is List<*>) -> FieldComparison.LIST
    (expected is Map<*, *> && actual is Map<*, *>) -> FieldComparison.MAP
    (expected is Set<*> && actual is Set<*>) -> FieldComparison.SET
+   typeIsJavaOrKotlinBuiltIn(expected) || typeIsJavaOrKotlinBuiltIn(actual) -> FieldComparison.DEFAULT
+   useDefaultEqualForFields.contains(expected::class.java.canonicalName) ||
+      useDefaultEqualForFields.contains(actual::class.java.canonicalName) -> FieldComparison.DEFAULT
    actual::class != expected::class -> FieldComparison.DEFAULT
    else -> FieldComparison.RECURSIVE
 }

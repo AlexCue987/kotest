@@ -27,6 +27,15 @@ class EqualityOfFieldsTest: WordSpec() {
             comparisonToUse(Mug("blue", 12), Mug("blue", 11), listOf(className)) shouldBe FieldComparison.DEFAULT
             comparisonToUse(Mug("blue", 11), Mug("blue", 12), listOf(className)) shouldBe FieldComparison.DEFAULT
          }
+         "handle List" {
+            comparisonToUse(listOf(1), listOf(12), listOf()) shouldBe FieldComparison.LIST
+         }
+         "handle Map" {
+            comparisonToUse(mapOf(2 to "two"), mapOf(1 to "one"), listOf()) shouldBe FieldComparison.MAP
+         }
+         "handle Set" {
+            comparisonToUse(setOf(1), setOf(12), listOf()) shouldBe FieldComparison.SET
+         }
       }
    }
 }
