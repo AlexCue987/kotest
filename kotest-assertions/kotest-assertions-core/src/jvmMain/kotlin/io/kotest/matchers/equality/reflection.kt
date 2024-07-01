@@ -631,11 +631,26 @@ private fun requiresUseOfDefaultEq(
       || expectedOrActualIsEnum
 }
 
+internal fun comparisonToUse(
+   actual: Any?,
+   expected: Any?,
+   useDefaultEqualForFields: List<String>
+): FieldComparison = when {
+   actual == null || expected == null -> FieldComparison.DEFAULT
+   isEnum(expected) || isEnum(actual) -> FieldComparison.DEFAULT
+   else -> FieldComparison.RECURSIVE
+}
+
 internal fun isEnum(value: Any?) = when(value) {
    null -> false
    is Enum<*> -> true
    value::class.java.isEnum -> true
    else -> false
+}
+
+internal fun typeIsJavaOrKotlinBuiltIn(value: Any): Boolean {
+   val typeName = value::class.java.canonicalName
+   return typeName.startsWith("kotlin.") || typeName.startsWith("java.")
 }
 
 internal enum class FieldComparison {

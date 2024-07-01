@@ -308,6 +308,14 @@ class ReflectionKtTest : FunSpec() {
          }
       }
 
+      test("typeIsJavaOrKotlinBuiltIn works") {
+         assertSoftly {
+            typeIsJavaOrKotlinBuiltIn("Any") shouldBe true
+            typeIsJavaOrKotlinBuiltIn(Exception("Oops!")) shouldBe true
+            typeIsJavaOrKotlinBuiltIn(Car("C1", 10000, 430)) shouldBe false
+         }
+      }
+
    }
 
    data class KeyValuePair<T : Any>(
