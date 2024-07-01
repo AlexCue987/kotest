@@ -299,6 +299,12 @@ class ReflectionKtTest : FunSpec() {
          }.message.shouldContain("expected:<TWO> but was:<ONE>")
       }
 
+      test("comparisonToUse") {
+         assertSoftly {
+            comparisonToUse(null, "Apple", listOf()) shouldBe FieldComparison.DEFAULT
+         }
+      }
+
       test("isEnum should work") {
          assertSoftly {
             isEnum(null) shouldBe false

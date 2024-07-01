@@ -638,6 +638,13 @@ internal fun comparisonToUse(
 ): FieldComparison = when {
    actual == null || expected == null -> FieldComparison.DEFAULT
    isEnum(expected) || isEnum(actual) -> FieldComparison.DEFAULT
+   typeIsJavaOrKotlinBuiltIn(expected) || typeIsJavaOrKotlinBuiltIn(actual) -> FieldComparison.DEFAULT
+   useDefaultEqualForFields.contains(expected::class.java.canonicalName) ||
+      useDefaultEqualForFields.contains(actual::class.java.canonicalName) -> FieldComparison.DEFAULT
+   (expected is List<*> && actual is List<*>) -> FieldComparison.LIST
+   (expected is Map<*, *> && actual is Map<*, *>) -> FieldComparison.MAP
+   (expected is Set<*> && actual is Set<*>) -> FieldComparison.SET
+   actual::class != expected::class -> FieldComparison.DEFAULT
    else -> FieldComparison.RECURSIVE
 }
 
@@ -653,13 +660,7 @@ internal fun typeIsJavaOrKotlinBuiltIn(value: Any): Boolean {
    return typeName.startsWith("kotlin.") || typeName.startsWith("java.")
 }
 
-internal enum class FieldComparison {
-   DEFAULT,
-   RECURSIVE,
-   //LIST, TODO: Implement
-   //MAP, TODO: Implement
-   //SET TODO: Implement
-}
+internal enum class FieldComparison { DEFAULT, RECURSIVE, LIST, MAP, SET }
 
 /**
  * A config for controlling the way shouldBeEqualToComparingFields compare fields.
