@@ -12,7 +12,6 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmName
 
 /**
@@ -576,24 +575,16 @@ internal fun <T> checkEqualityOfFieldsRecursively(
 
    val fields: List<KProperty1<out T & Any, *>> = value!!::class.memberProperties
       .asSequence()
-      .onEach {
-         it.isAccessible = true
-         val isComputed = (it.javaField != null)
-         println("${it.name} $isComputed, ${it.visibility}, ${it !in config.propertiesToExclude}, ${config.propertiesToExclude}")
-      }
+      .onEach { it.isAccessible = true }
       .filter(predicates)
       .sortedBy { it.name }
       .toList()
 
-   println(fields.map{it.name})
-
    return fields.mapNotNull {
       val actual = it.getter.call(value)
       val expected = it.getter.call(other)
-//      val generic = it.returnType.classifier.
       val typeName = when (val classifier = it.returnType.classifier) {
          is KClass<*> -> classifier.qualifiedName ?: classifier.jvmName
-//         (expected::class.java == actual::class.java) -> expected::class.java.canonicalName
          else -> it.returnType.toString().replace("?", "")
       }
       val heading = "${it.name}:"
@@ -638,6 +629,21 @@ private fun requiresUseOfDefaultEq(
       || typeIsJavaOrKotlinBuiltIn
       || useDefaultEqualForFields.contains(typeName)
       || expectedOrActualIsEnum
+}
+
+internal fun isEnum(value: Any?) = when(value) {
+   null -> false
+   is Enum<*> -> true
+   value::class.java.isEnum -> true
+   else -> false
+}
+
+internal enum class FieldComparison {
+   DEFAULT,
+   RECURSIVE,
+   //LIST, TODO: Implement
+   //MAP, TODO: Implement
+   //SET TODO: Implement
 }
 
 /**

@@ -1,5 +1,6 @@
 package com.sksamuel.kotest.matchers.equality
 
+import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.shouldFail
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -9,6 +10,7 @@ import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 import io.mockk.mockk
 import org.junit.jupiter.api.assertThrows
+import java.time.DayOfWeek
 import kotlin.random.Random
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
@@ -295,6 +297,15 @@ class ReflectionKtTest : FunSpec() {
          shouldFail {
             EnumWrapper(EnumWithProperties.ONE).shouldBeEqualToComparingFields(EnumWrapper(EnumWithProperties.TWO))
          }.message.shouldContain("expected:<TWO> but was:<ONE>")
+      }
+
+      test("isEnum should work") {
+         assertSoftly {
+            isEnum(null) shouldBe false
+            isEnum(SimpleEnum.ONE) shouldBe true
+            isEnum(DayOfWeek.TUESDAY) shouldBe true
+            isEnum("Something") shouldBe false
+         }
       }
 
    }
