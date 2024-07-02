@@ -22,10 +22,15 @@ class EqualityOfFieldsTest: WordSpec() {
             comparisonToUse(BigDecimal.ONE, Mug("blue", 11), listOf()) shouldBe FieldComparison.DEFAULT
             comparisonToUse(Mug("blue", 11), BigDecimal.ONE, listOf()) shouldBe FieldComparison.DEFAULT
          }
+         "use RECURSIVE" {
+            comparisonToUse(Mug("blue", 12), Mug("blue", 11), listOf()) shouldBe FieldComparison.RECURSIVE
+         }
+         "do not use RECURSIVE if classes are different" {
+            comparisonToUse(Mug("blue", 12), Cup("blue", 11), listOf()) shouldBe FieldComparison.DEFAULT
+         }
          "override with custom list of types" {
             val className = "com.sksamuel.kotest.matchers.equality.Mug"
             comparisonToUse(Mug("blue", 12), Mug("blue", 11), listOf(className)) shouldBe FieldComparison.DEFAULT
-            comparisonToUse(Mug("blue", 11), Mug("blue", 12), listOf(className)) shouldBe FieldComparison.DEFAULT
          }
          "handle List" {
             comparisonToUse(listOf(1), listOf(12), listOf()) shouldBe FieldComparison.LIST
@@ -40,7 +45,12 @@ class EqualityOfFieldsTest: WordSpec() {
    }
 }
 
-data class Mug(
+internal data class Mug(
+   val color: String,
+   val capacity: Int
+)
+
+internal data class Cup(
    val color: String,
    val capacity: Int
 )
