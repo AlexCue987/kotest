@@ -283,13 +283,13 @@ class ReflectionKtTest : FunSpec() {
 
       test("shouldBeEqualToComparingFields supports generic fields") {
          shouldFail {
-            HasComputedField("foo") shouldBeEqualToComparingFields HasComputedField("bar")
+            KeyValuePair("color", "green").shouldBeEqualToComparingFields(KeyValuePair("color", "amber"))
          }.message shouldNotContain "random"
       }
 
       test("shouldBeEqualToWithEnums") {
          shouldFail {
-            KeyValuePair("color", "green").shouldBeEqualToComparingFields(KeyValuePair("color", "amber"))
+            EnumWrapper(SimpleEnum.ONE).shouldBeEqualToComparingFields(EnumWrapper(SimpleEnum.TWO))
          }.message.shouldContain("expected:<TWO> but was:<ONE>")
       }
 

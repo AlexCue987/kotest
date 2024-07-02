@@ -589,27 +589,52 @@ internal fun <T> checkEqualityOfFieldsRecursively(
       }
       val heading = "${it.name}:"
 
-      if (requiresUseOfDefaultEq(actual, expected, typeName, config.useDefaultShouldBeForFields)) {
-         val throwable = eq(actual, expected)
-         if (throwable != null) {
-            "$heading\n${"\t".repeat(level + 1)}${throwable.message}"
-         } else {
-            null
+      when(comparisonToUse(actual, expected, config.useDefaultShouldBeForFields)) {
+         FieldComparison.RECURSIVE -> {
+            val (errorMessage, _) = checkEqualityOfFieldsRecursively(
+               actual,
+               expected,
+               config,
+               level + 1
+            )
+            if (errorMessage.isEmpty()) {
+               null
+            } else {
+               val innerErrorMessage = errorMessage.joinToString("\n") { msg -> "\t".repeat(level + 1) + msg }
+               "$heading${"\t".repeat(level)}\n$innerErrorMessage"
+            }
          }
-      } else {
-         val (errorMessage, _) = checkEqualityOfFieldsRecursively(
-            actual,
-            expected,
-            config,
-            level + 1
-         )
-         if (errorMessage.isEmpty()) {
-            null
-         } else {
-            val innerErrorMessage = errorMessage.joinToString("\n") { msg -> "\t".repeat(level + 1) + msg }
-            "$heading${"\t".repeat(level)}\n$innerErrorMessage"
+         else -> {
+            val throwable = eq(actual, expected)
+            if (throwable != null) {
+               "$heading\n${"\t".repeat(level + 1)}${throwable.message}"
+            } else {
+               null
+            }
          }
       }
+
+//      if (requiresUseOfDefaultEq(actual, expected, typeName, config.useDefaultShouldBeForFields)) {
+//         val throwable = eq(actual, expected)
+//         if (throwable != null) {
+//            "$heading\n${"\t".repeat(level + 1)}${throwable.message}"
+//         } else {
+//            null
+//         }
+//      } else {
+//         val (errorMessage, _) = checkEqualityOfFieldsRecursively(
+//            actual,
+//            expected,
+//            config,
+//            level + 1
+//         )
+//         if (errorMessage.isEmpty()) {
+//            null
+//         } else {
+//            val innerErrorMessage = errorMessage.joinToString("\n") { msg -> "\t".repeat(level + 1) + msg }
+//            "$heading${"\t".repeat(level)}\n$innerErrorMessage"
+//         }
+//      }
    } to fields
 }
 
@@ -641,6 +666,7 @@ internal fun comparisonToUse(
    (expected is List<*> && actual is List<*>) -> FieldComparison.LIST
    (expected is Map<*, *> && actual is Map<*, *>) -> FieldComparison.MAP
    (expected is Set<*> && actual is Set<*>) -> FieldComparison.SET
+   (expected is Array<*> && actual is Array<*>) -> FieldComparison.ARRAY
    typeIsJavaOrKotlinBuiltIn(expected) || typeIsJavaOrKotlinBuiltIn(actual) -> FieldComparison.DEFAULT
    useDefaultEqualForFields.contains(expected::class.java.canonicalName) ||
       useDefaultEqualForFields.contains(actual::class.java.canonicalName) -> FieldComparison.DEFAULT
@@ -660,7 +686,7 @@ internal fun typeIsJavaOrKotlinBuiltIn(value: Any): Boolean {
    return typeName.startsWith("kotlin.") || typeName.startsWith("java.")
 }
 
-internal enum class FieldComparison { DEFAULT, RECURSIVE, LIST, MAP, SET }
+internal enum class FieldComparison { DEFAULT, RECURSIVE, LIST, MAP, SET, ARRAY }
 
 /**
  * A config for controlling the way shouldBeEqualToComparingFields compare fields.
