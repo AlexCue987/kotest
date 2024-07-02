@@ -3,6 +3,8 @@ package com.sksamuel.kotest.matchers.equality
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.equality.FieldComparison
 import io.kotest.matchers.equality.comparisonToUse
+import io.kotest.matchers.equality.isEnum
+import io.kotest.matchers.equality.typeIsJavaOrKotlinBuiltIn
 import io.kotest.matchers.shouldBe
 import java.math.BigDecimal
 import java.time.DayOfWeek
@@ -40,6 +42,31 @@ class EqualityOfFieldsTest: WordSpec() {
          }
          "handle Set" {
             comparisonToUse(setOf(1), setOf(12), listOf()) shouldBe FieldComparison.SET
+         }
+      }
+      "isEnum" should {
+         "handle null" {
+            isEnum(null) shouldBe false
+         }
+         "handle Kotlin enum" {
+            isEnum(ReflectionKtTest.SimpleEnum.ONE) shouldBe true
+         }
+         "handle enum from Java standard library" {
+            isEnum(DayOfWeek.TUESDAY) shouldBe true
+         }
+         "handle non-enum" {
+            isEnum("Something") shouldBe false
+         }
+      }
+      "typeIsJavaOrKotlinBuiltIn" should {
+         "true for String" {
+            typeIsJavaOrKotlinBuiltIn("Any") shouldBe true
+         }
+         "true for Exception" {
+            typeIsJavaOrKotlinBuiltIn(Exception("Oops!")) shouldBe true
+         }
+         "false for custom type" {
+            typeIsJavaOrKotlinBuiltIn(ReflectionKtTest.Car("C1", 10000, 430)) shouldBe false
          }
       }
    }

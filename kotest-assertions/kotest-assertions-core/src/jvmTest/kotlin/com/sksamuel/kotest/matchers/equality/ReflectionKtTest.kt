@@ -1,7 +1,7 @@
 package com.sksamuel.kotest.matchers.equality
 
-import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.shouldFail
+import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.equality.*
@@ -10,7 +10,6 @@ import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 import io.mockk.mockk
 import org.junit.jupiter.api.assertThrows
-import java.time.DayOfWeek
 import kotlin.random.Random
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
@@ -281,10 +280,16 @@ class ReflectionKtTest : FunSpec() {
          }.message shouldNotContain "random"
       }
 
-      test("shouldBeEqualToComparingFields supports generic fields") {
+      test("shouldBeEqualToComparingFields fails if generic fields are different") {
          shouldFail {
             KeyValuePair("color", "green").shouldBeEqualToComparingFields(KeyValuePair("color", "amber"))
          }.message shouldNotContain "random"
+      }
+
+      test("shouldBeEqualToComparingFields passes if generic fields are same") {
+         shouldNotThrowAny {
+            KeyValuePair("color", "green").shouldBeEqualToComparingFields(KeyValuePair("color", "green"))
+         }
       }
 
       test("shouldBeEqualToWithEnums") {
@@ -298,30 +303,6 @@ class ReflectionKtTest : FunSpec() {
             EnumWrapper(EnumWithProperties.ONE).shouldBeEqualToComparingFields(EnumWrapper(EnumWithProperties.TWO))
          }.message.shouldContain("expected:<TWO> but was:<ONE>")
       }
-
-      test("comparisonToUse") {
-         assertSoftly {
-            comparisonToUse(null, "Apple", listOf()) shouldBe FieldComparison.DEFAULT
-         }
-      }
-
-      test("isEnum should work") {
-         assertSoftly {
-            isEnum(null) shouldBe false
-            isEnum(SimpleEnum.ONE) shouldBe true
-            isEnum(DayOfWeek.TUESDAY) shouldBe true
-            isEnum("Something") shouldBe false
-         }
-      }
-
-      test("typeIsJavaOrKotlinBuiltIn works") {
-         assertSoftly {
-            typeIsJavaOrKotlinBuiltIn("Any") shouldBe true
-            typeIsJavaOrKotlinBuiltIn(Exception("Oops!")) shouldBe true
-            typeIsJavaOrKotlinBuiltIn(Car("C1", 10000, 430)) shouldBe false
-         }
-      }
-
    }
 
    data class KeyValuePair<T : Any>(
