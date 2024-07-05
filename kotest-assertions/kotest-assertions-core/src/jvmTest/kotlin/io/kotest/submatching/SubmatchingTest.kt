@@ -11,9 +11,13 @@ class SubmatchingTest: WordSpec() {
          "find nothing" {
             findPartialMatches("apple", "orange", minLength = 3).shouldBeEmpty()
          }
-         "find common substring" {
+         "match end of one string to beginning of another" {
             findPartialMatches("broom", "roommate", minLength = 4) shouldBe listOf(
                PartialMatch(MatchedCharacter(1, 0), 4, "room"))
+         }
+         "match two middles" {
+            findPartialMatches("room", "boot", minLength = 2) shouldBe listOf(
+               PartialMatch(MatchedCharacter(1, 1), 2, "oo"))
          }
          "find common end" {
             findPartialMatches("river", "driver", minLength = 5) shouldBe listOf(
