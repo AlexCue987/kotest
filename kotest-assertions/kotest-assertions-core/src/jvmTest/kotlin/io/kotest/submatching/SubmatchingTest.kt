@@ -53,6 +53,28 @@ class SubmatchingTest: WordSpec() {
             )
          }
       }
+      "extendPartialMatchToRequiredLength" should {
+           "return submatch if it has required length" {
+              val matchedElement = MatchedElement(0, 1)
+              val value = "table".toList()
+              extendPartialMatchToRequiredLength(
+                 value = value,
+                 target = "stable".toList(),
+                 matchedElement = matchedElement,
+                 minLength = 5
+              ) shouldBe PartialMatch(matchedElement, 5, value)
+           }
+         "return null if submatch is too short" {
+            val matchedElement = MatchedElement(0, 1)
+            val value = "rush".toList()
+            extendPartialMatchToRequiredLength(
+               value = value,
+               target = "brushes".toList(),
+               matchedElement = matchedElement,
+               minLength = 5
+            ) shouldBe null
+         }
+      }
       "removeShorterMatchesWithSameEnd" should {
           "leave matches as is when there is nothing to remove" {
               val matches = listOf(

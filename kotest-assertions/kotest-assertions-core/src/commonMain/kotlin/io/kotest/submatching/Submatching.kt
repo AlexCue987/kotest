@@ -21,16 +21,25 @@ internal fun<T> findPartialMatches(value: List<T>, target: List<T>, minLength: I
         )
        } ?: listOf()
        }.mapNotNull { matchedCharacter ->
-          val lengthOfMatch = lengthOfMatch(value, target, matchedCharacter)
-          if(lengthOfMatch >= minLength) {
-             PartialMatch(
-                matchedCharacter,
-                lengthOfMatch,
-                value
-             )
-          } else null
+          extendPartialMatchToRequiredLength(value, target, matchedCharacter, minLength)
        }.toList()
    return removeShorterMatchesWithSameEnd(matches)
+}
+
+internal fun <T> extendPartialMatchToRequiredLength(
+   value: List<T>,
+   target: List<T>,
+   matchedElement: MatchedElement,
+   minLength: Int
+): PartialMatch<T>? {
+   val lengthOfMatch = lengthOfMatch(value, target, matchedElement)
+   return if (lengthOfMatch >= minLength) {
+      PartialMatch(
+         matchedElement,
+         lengthOfMatch,
+         value
+      )
+   } else null
 }
 
 internal fun<T> removeShorterMatchesWithSameEnd(
