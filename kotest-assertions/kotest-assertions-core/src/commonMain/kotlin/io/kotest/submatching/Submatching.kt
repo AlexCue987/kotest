@@ -1,18 +1,21 @@
 package io.kotest.submatching
 
 
-internal fun toCharIndex(value: String): Map<Char, List<Int>> {
-   return value.mapIndexed { index, char ->
-      index to char
+internal fun<T> toCharIndex(value: Collection<T>): Map<T, List<Int>> {
+   return value.mapIndexed { index, element ->
+      index to element
    }.groupBy(keySelector = { it.second }, valueTransform = { it.first })
 }
 
-internal fun findPartialMatches(value: String, target: String, minLength: Int): List<PartialMatch> {
+internal fun findPartialMatches(value: String, target: String, minLength: Int) =
+   findPartialMatches(value.toList(), target.toList(), minLength)
+
+internal fun<T> findPartialMatches(value: List<T>, target: List<T>, minLength: Int): List<PartialMatch<T>> {
     val indexes = toCharIndex(target)
     val matches = value.asSequence().mapIndexed { index, char ->
         index to char
-    }.filter { pair -> pair.first + minLength <= value.length }
-       .flatMap { pair -> indexes[pair.second]?.map { index -> MatchedCharacter(
+    }.filter { pair -> pair.first + minLength <= value.size }
+       .flatMap { pair -> indexes[pair.second]?.map { index -> MatchedElement(
             indexInValue = pair.first,
             indexInTarget = index
         )
@@ -23,16 +26,16 @@ internal fun findPartialMatches(value: String, target: String, minLength: Int): 
              PartialMatch(
                 matchedCharacter,
                 lengthOfMatch,
-                value.substring(matchedCharacter.indexInValue, matchedCharacter.indexInValue + lengthOfMatch)
+                value
              )
           } else null
        }.toList()
    return removeShorterMatchesWithSameEnd(matches)
 }
 
-internal fun removeShorterMatchesWithSameEnd(
-   matches: List<PartialMatch>
-): List<PartialMatch> {
+internal fun<T> removeShorterMatchesWithSameEnd(
+   matches: List<PartialMatch<T>>
+): List<PartialMatch<T>> {
    val matchesGroupedByEnd = matches.groupBy {
       it.endOfMatchAtTarget
    }
@@ -41,25 +44,27 @@ internal fun removeShorterMatchesWithSameEnd(
    }
 }
 
-internal fun lengthOfMatch(
-   value: String, target: String, matchedCharacter: MatchedCharacter
+internal fun<T> lengthOfMatch(
+   value: List<T>, target: List<T>, matchedElement: MatchedElement
 ): Int {
-   val maxLengthOfMatch = minOf(value.length - matchedCharacter.indexInValue, target.length - matchedCharacter.indexInTarget)
+   val maxLengthOfMatch = minOf(value.size - matchedElement.indexInValue, target.size - matchedElement.indexInTarget)
    return (1..maxLengthOfMatch).takeWhile { offset ->
-      value[matchedCharacter.indexInValue + offset - 1] == target[matchedCharacter.indexInTarget + offset - 1]
+      value[matchedElement.indexInValue + offset - 1] == target[matchedElement.indexInTarget + offset - 1]
    }.lastOrNull() ?: 0
 }
 
-internal data class MatchedCharacter(
+internal data class MatchedElement(
    val indexInValue: Int,
    val indexInTarget: Int
 )
 
-internal data class PartialMatch(
-   val matchedCharacter: MatchedCharacter,
+internal data class PartialMatch<T>(
+   val matchedElement: MatchedElement,
    val length: Int,
-   val partOfValue: String
+   val value: List<T>
 ) {
    val endOfMatchAtTarget: Int
-      get() = matchedCharacter.indexInTarget + length - 1
+      get() = matchedElement.indexInTarget + length - 1
+   val partOfValue: List<T>
+       get() = value.subList(matchedElement.indexInValue, matchedElement.indexInValue + length - 1)
 }

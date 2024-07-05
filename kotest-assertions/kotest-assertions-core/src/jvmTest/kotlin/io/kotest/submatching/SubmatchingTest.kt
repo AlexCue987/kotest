@@ -14,26 +14,26 @@ class SubmatchingTest: WordSpec() {
          }
          "match end of one string to beginning of another" {
             findPartialMatches("broom", "roommate", minLength = 4) shouldBe listOf(
-               PartialMatch(MatchedCharacter(1, 0), 4, "room"))
+               PartialMatch(MatchedElement(1, 0), 4, "broom".toList()))
          }
          "match two middles" {
             findPartialMatches("room", "boot", minLength = 2) shouldBe listOf(
-               PartialMatch(MatchedCharacter(1, 1), 2, "oo"))
+               PartialMatch(MatchedElement(1, 1), 2, "room".toList()))
          }
          "find common end" {
             findPartialMatches("river", "driver", minLength = 3) shouldBe listOf(
-               PartialMatch(MatchedCharacter(0, 1), 5, "river"))
+               PartialMatch(MatchedElement(0, 1), 5, "river".toList()))
          }
          "find two common substrings in same order" {
             findPartialMatches("roommate", "room-mate", minLength = 3) shouldBe listOf(
-               PartialMatch(MatchedCharacter(0, 0), 4, "room"),
-               PartialMatch(MatchedCharacter(4, 5), 4, "mate"),
+               PartialMatch(MatchedElement(0, 0), 4, "roommate".toList()),
+               PartialMatch(MatchedElement(4, 5), 4, "roommate".toList()),
             )
          }
          "find two common substrings in opposite order" {
             findPartialMatches("downsize", "size down", minLength = 3) shouldBe listOf(
-               PartialMatch(MatchedCharacter(0, 5), 4, "down"),
-               PartialMatch(MatchedCharacter(4, 0), 4, "size"),
+               PartialMatch(MatchedElement(0, 5), 4, "downsize".toList()),
+               PartialMatch(MatchedElement(4, 0), 4, "downsize".toList()),
             )
          }
          "maintain performance".config(timeout = 1.seconds) {
@@ -43,28 +43,37 @@ class SubmatchingTest: WordSpec() {
             partialMatches.size shouldBe 1
             partialMatches[0].length shouldBe target.length - 15
          }
+         "work for Int" {
+            val value = listOf(1, 2, 3, 4)
+            findPartialMatches (
+               value = value,
+               target = listOf(0, 1, 2, 3, 4, 3, 6),
+               minLength = 4
+               ) shouldBe listOf(PartialMatch(MatchedElement(0, 1), 4, value),
+            )
+         }
       }
       "removeShorterMatchesWithSameEnd" should {
           "leave matches as is when there is nothing to remove" {
               val matches = listOf(
-                 PartialMatch(MatchedCharacter(0, 5), 4, "down"),
-                 PartialMatch(MatchedCharacter(4, 0), 4, "size"),
+                 PartialMatch(MatchedElement(0, 5), 4, "down".toList()),
+                 PartialMatch(MatchedElement(4, 0), 4, "size".toList()),
               )
              removeShorterMatchesWithSameEnd(matches) shouldBe matches
           }
          "remove shorter matches that are inside longer ones" {
             val matches = listOf(
-               PartialMatch(MatchedCharacter(0, 5), 4, "down"),
-               PartialMatch(MatchedCharacter(4, 0), 4, "size"),
-               PartialMatch(MatchedCharacter(1, 6), 3, "own"),
-               PartialMatch(MatchedCharacter(5, 1), 3, "ize"),
+               PartialMatch(MatchedElement(0, 5), 4, "down".toList()),
+               PartialMatch(MatchedElement(4, 0), 4, "size".toList()),
+               PartialMatch(MatchedElement(1, 6), 3, "own".toList()),
+               PartialMatch(MatchedElement(5, 1), 3, "ize".toList()),
             )
             removeShorterMatchesWithSameEnd(matches) shouldBe matches.filter { it.length == 4}
          }
       }
       "toCharIndex" should {
          "count" {
-            toCharIndex("apple") shouldBe mapOf(
+            toCharIndex("apple".toList()) shouldBe mapOf(
                'a' to listOf(0),
                'p' to listOf(1, 2),
                'l' to listOf(3),
@@ -77,46 +86,46 @@ class SubmatchingTest: WordSpec() {
             (0..3).forEach { start ->
                withClue("Matching target at index $start") {
                   lengthOfMatch(
-                     value = "bug",
-                     target = "feature",
-                     matchedCharacter = MatchedCharacter(0, start)
+                     value = "bug".toList(),
+                     target = "feature".toList(),
+                     matchedElement = MatchedElement(0, start)
                   ) shouldBe 0
                }
             }
          }
          "mismatch on first char" {
             lengthOfMatch(
-               value = "prone",
-               target = "drone",
-               matchedCharacter = MatchedCharacter(0, 0)
+               value = "prone".toList(),
+               target = "drone".toList(),
+               matchedElement = MatchedElement(0, 0)
             ) shouldBe 0
          }
          "skip some chars at start" {
             lengthOfMatch(
-               value = "prone",
-               target = "drone",
-               matchedCharacter = MatchedCharacter(1, 1)
+               value = "prone".toList(),
+               target = "drone".toList(),
+               matchedElement = MatchedElement(1, 1)
             ) shouldBe 4
          }
          "find common start" {
             lengthOfMatch(
-               value = "car",
-               target = "cartoon",
-               matchedCharacter = MatchedCharacter(0, 0)
+               value = "car".toList(),
+               target = "cartoon".toList(),
+               matchedElement = MatchedElement(0, 0)
             ) shouldBe 3
          }
          "stop at shorter substring in the middle of a loger one" {
             lengthOfMatch(
-               value = "rip",
-               target = "tripod",
-               matchedCharacter = MatchedCharacter(0, 1)
+               value = "rip".toList(),
+               target = "tripod".toList(),
+               matchedElement = MatchedElement(0, 1)
             ) shouldBe 3
          }
          "find common end" {
             lengthOfMatch(
-               value = "come",
-               target = "outcome",
-               matchedCharacter = MatchedCharacter(0, 3)
+               value = "come".toList(),
+               target = "outcome".toList(),
+               matchedElement = MatchedElement(0, 3)
             ) shouldBe 4
          }
       }
