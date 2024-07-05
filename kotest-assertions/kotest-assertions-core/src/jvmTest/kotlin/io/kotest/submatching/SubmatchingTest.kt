@@ -25,6 +25,12 @@ class SubmatchingTest: WordSpec() {
                PartialMatch(MatchedCharacter(4, 5), 4, "mate"),
             )
          }
+         "find two common substrings in opposite order" {
+            findPartialMatches("downsize", "size down", minLength = 4) shouldBe listOf(
+               PartialMatch(MatchedCharacter(0, 5), 4, "down"),
+               PartialMatch(MatchedCharacter(4, 0), 4, "size"),
+            )
+         }
       }
       "toCharIndex" should {
          "count" {
