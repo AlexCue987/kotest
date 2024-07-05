@@ -4,6 +4,7 @@ import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
+import kotlin.time.Duration.Companion.seconds
 
 class SubmatchingTest: WordSpec() {
    init {
@@ -20,20 +21,27 @@ class SubmatchingTest: WordSpec() {
                PartialMatch(MatchedCharacter(1, 1), 2, "oo"))
          }
          "find common end" {
-            findPartialMatches("river", "driver", minLength = 5) shouldBe listOf(
+            findPartialMatches("river", "driver", minLength = 3) shouldBe listOf(
                PartialMatch(MatchedCharacter(0, 1), 5, "river"))
          }
          "find two common substrings in same order" {
-            findPartialMatches("roommate", "room-mate", minLength = 4) shouldBe listOf(
+            findPartialMatches("roommate", "room-mate", minLength = 3) shouldBe listOf(
                PartialMatch(MatchedCharacter(0, 0), 4, "room"),
                PartialMatch(MatchedCharacter(4, 5), 4, "mate"),
             )
          }
          "find two common substrings in opposite order" {
-            findPartialMatches("downsize", "size down", minLength = 4) shouldBe listOf(
+            findPartialMatches("downsize", "size down", minLength = 3) shouldBe listOf(
                PartialMatch(MatchedCharacter(0, 5), 4, "down"),
                PartialMatch(MatchedCharacter(4, 0), 4, "size"),
             )
+         }
+         "maintain performance".config(timeout = 1.seconds) {
+            val target = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            val value = target.substring(5, target.length - 10)
+            val partialMatches = findPartialMatches(value, target, target.length / 2)
+            partialMatches.size shouldBe 1
+            partialMatches[0].length shouldBe target.length - 15
          }
       }
       "removeShorterMatchesWithSameEnd" should {

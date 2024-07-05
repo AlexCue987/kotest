@@ -9,7 +9,7 @@ internal fun toCharIndex(value: String): Map<Char, List<Int>> {
 
 internal fun findPartialMatches(value: String, target: String, minLength: Int): List<PartialMatch> {
     val indexes = toCharIndex(target)
-    return value.asSequence().mapIndexed { index, char ->
+    val matches = value.asSequence().mapIndexed { index, char ->
         index to char
     }.filter { pair -> pair.first + minLength <= value.length }
        .flatMap { pair -> indexes[pair.second]?.map { index -> MatchedCharacter(
@@ -27,6 +27,7 @@ internal fun findPartialMatches(value: String, target: String, minLength: Int): 
              )
           } else null
        }.toList()
+   return removeShorterMatchesWithSameEnd(matches)
 }
 
 internal fun removeShorterMatchesWithSameEnd(
