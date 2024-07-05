@@ -29,6 +29,17 @@ internal fun findPartialMatches(value: String, target: String, minLength: Int): 
        }.toList()
 }
 
+internal fun removeShorterMatchesWithSameEnd(
+   matches: List<PartialMatch>
+): List<PartialMatch> {
+   val matchesGroupedByEnd = matches.groupBy {
+      it.endOfMatchAtTarget
+   }
+   return matchesGroupedByEnd.values.map { matchesWithSameEnd ->
+      matchesWithSameEnd.maxBy { it.length }
+   }
+}
+
 internal fun lengthOfMatch(
    value: String, target: String, matchedCharacter: MatchedCharacter
 ): Int {
@@ -47,4 +58,7 @@ internal data class PartialMatch(
    val matchedCharacter: MatchedCharacter,
    val length: Int,
    val partOfValue: String
-)
+) {
+   val endOfMatchAtTarget: Int
+      get() = matchedCharacter.indexInTarget + length - 1
+}

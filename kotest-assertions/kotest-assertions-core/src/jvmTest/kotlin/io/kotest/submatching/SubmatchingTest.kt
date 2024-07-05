@@ -36,6 +36,24 @@ class SubmatchingTest: WordSpec() {
             )
          }
       }
+      "removeShorterMatchesWithSameEnd" should {
+          "leave matches as is when there is nothing to remove" {
+              val matches = listOf(
+                 PartialMatch(MatchedCharacter(0, 5), 4, "down"),
+                 PartialMatch(MatchedCharacter(4, 0), 4, "size"),
+              )
+             removeShorterMatchesWithSameEnd(matches) shouldBe matches
+          }
+         "remove shorter matches that are inside longer ones" {
+            val matches = listOf(
+               PartialMatch(MatchedCharacter(0, 5), 4, "down"),
+               PartialMatch(MatchedCharacter(4, 0), 4, "size"),
+               PartialMatch(MatchedCharacter(1, 6), 3, "own"),
+               PartialMatch(MatchedCharacter(5, 1), 3, "ize"),
+            )
+            removeShorterMatchesWithSameEnd(matches) shouldBe matches.filter { it.length == 4}
+         }
+      }
       "toCharIndex" should {
          "count" {
             toCharIndex("apple") shouldBe mapOf(
