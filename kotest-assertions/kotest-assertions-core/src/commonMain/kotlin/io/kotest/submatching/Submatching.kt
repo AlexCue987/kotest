@@ -15,16 +15,23 @@ internal fun<T> findPartialMatches(value: List<T>, target: List<T>, minLength: I
     val matches = value.asSequence().mapIndexed { index, char ->
         index to char
     }.filter { pair -> pair.first + minLength <= value.size }
-       .flatMap { pair -> indexes[pair.second]?.map { index -> MatchedElement(
-            indexInValue = pair.first,
-            indexInTarget = index
-        )
-       } ?: listOf()
+       .flatMap { pair ->
+          matchedElements(indexes, pair)
        }.mapNotNull { matchedCharacter ->
           extendPartialMatchToRequiredLength(value, target, matchedCharacter, minLength)
        }.toList()
    return removeShorterMatchesWithSameEnd(matches)
 }
+
+internal fun <T> matchedElements(
+   indexes: Map<T, List<Int>>,
+   elementAtIndex: Pair<Int, T>
+) = indexes[elementAtIndex.second]?.map { index ->
+   MatchedElement(
+      indexInValue = elementAtIndex.first,
+      indexInTarget = index
+   )
+} ?: listOf()
 
 internal fun <T> extendPartialMatchToRequiredLength(
    value: List<T>,

@@ -53,6 +53,39 @@ class SubmatchingTest: WordSpec() {
             )
          }
       }
+      "matchedElements" should {
+         "return empty list if element not in index" {
+            matchedElements(indexes = mapOf(
+               'p' to listOf(0, 2, 3),
+               'u' to listOf(1),
+               'y' to listOf(4)
+            ),
+               elementAtIndex = 4 to 'e'
+            ).shouldBeEmpty()
+         }
+         "return list of one element" {
+            matchedElements(indexes = mapOf(
+               'p' to listOf(0, 2, 3),
+               'u' to listOf(1),
+               'y' to listOf(4)
+            ),
+               elementAtIndex = 3 to 'u'
+            ) shouldBe listOf(MatchedElement(3, 1))
+         }
+         "return list of several elements" {
+            matchedElements(indexes = mapOf(
+               'p' to listOf(0, 2, 3),
+               'u' to listOf(1),
+               'y' to listOf(4)
+            ),
+               elementAtIndex = 1 to 'p'
+            ) shouldBe listOf(
+               MatchedElement(1, 0),
+               MatchedElement(1, 2),
+               MatchedElement(1, 3),
+            )
+         }
+      }
       "extendPartialMatchToRequiredLength" should {
            "return submatch if it has required length" {
               val matchedElement = MatchedElement(0, 1)
