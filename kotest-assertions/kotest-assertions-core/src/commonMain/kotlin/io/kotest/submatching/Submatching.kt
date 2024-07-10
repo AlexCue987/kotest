@@ -1,12 +1,6 @@
 package io.kotest.submatching
 
 
-internal fun<T> toCharIndex(value: Collection<T>): Map<T, List<Int>> {
-   return value.mapIndexed { index, element ->
-      index to element
-   }.groupBy(keySelector = { it.second }, valueTransform = { it.first })
-}
-
 internal fun findPartialMatches(value: String, target: String, minLength: Int) =
    findPartialMatches(value.toList(), target.toList(), minLength)
 
@@ -21,6 +15,12 @@ internal fun<T> findPartialMatches(value: List<T>, target: List<T>, minLength: I
           extendPartialMatchToRequiredLength(value, target, matchedCharacter, minLength)
        }.toList()
    return removeShorterMatchesWithSameEnd(matches)
+}
+
+internal fun<T> toCharIndex(value: Collection<T>): Map<T, List<Int>> {
+   return value.mapIndexed { index, element ->
+      index to element
+   }.groupBy(keySelector = { it.second }, valueTransform = { it.first })
 }
 
 internal fun <T> matchedElements(
