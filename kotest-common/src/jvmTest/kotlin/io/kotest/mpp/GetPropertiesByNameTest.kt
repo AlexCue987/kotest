@@ -1,8 +1,10 @@
 package io.kotest.mpp
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 
 class GetPropertiesByNameTest: WordSpec() {
    init {
@@ -11,8 +13,12 @@ class GetPropertiesByNameTest: WordSpec() {
              JvmReflection.getPropertiesByName(Fruit::class).keys shouldBe setOf("name" , "weight")
           }
           "handle case when field and function have the same name" {
-             val actual = JvmReflection.getPropertiesByName(FruitWithCollision::class)["weight"]
-             actual!!.call(FruitWithCollision("apple", 12)) shouldBe 12
+             val actual = JvmReflection.getPropertiesByName(FruitWithMemberNameCollision::class)["weight"]
+             val fruitWithMemberNameCollision = FruitWithMemberNameCollision("apple", 12)
+             withClue("Guardian assumption: function and field return different values") {
+                fruitWithMemberNameCollision.weight() shouldNotBe fruitWithMemberNameCollision.weight
+             }
+             actual!!.call(fruitWithMemberNameCollision) shouldBe fruitWithMemberNameCollision.weight
           }
        }
       "primaryConstructorMembers" should {
@@ -20,14 +26,20 @@ class GetPropertiesByNameTest: WordSpec() {
             val fruit = Fruit("apple", 12)
             JvmReflection.primaryConstructorMembers(Fruit::class).map {
                it.call(fruit)
-            } shouldContainExactlyInAnyOrder listOf("apple", 12)
+            } shouldContainExactlyInAnyOrder listOf(fruit.name, fruit.weight)
          }
          "handle case when field and function have the same name" {
-            val actual = JvmReflection.primaryConstructorMembers(FruitWithCollision::class)
-            val fruitWithCollision = FruitWithCollision("apple", 12)
+            val actual = JvmReflection.primaryConstructorMembers(FruitWithMemberNameCollision::class)
+            val fruitWithMemberNameCollision = FruitWithMemberNameCollision("apple", 12)
+            withClue("Guardian assumption: function and field return different values") {
+               fruitWithMemberNameCollision.weight() shouldNotBe fruitWithMemberNameCollision.weight
+            }
             actual.map {
-               it.call(fruitWithCollision)
-            } shouldContainExactlyInAnyOrder listOf("apple", 12)
+               it.call(fruitWithMemberNameCollision)
+            } shouldContainExactlyInAnyOrder listOf(
+               fruitWithMemberNameCollision.name,
+               fruitWithMemberNameCollision.weight
+            )
          }
       }
    }
@@ -36,7 +48,7 @@ class GetPropertiesByNameTest: WordSpec() {
       val name: String,
       val weight: Int
    )
-   data class FruitWithCollision(
+   data class FruitWithMemberNameCollision(
       val name: String,
       val weight: Int
    ) {
