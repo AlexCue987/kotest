@@ -195,13 +195,32 @@ fun include(substr: String) = neverNullMatcher<String> { value ->
 }
 
 internal fun describeMatchedSubstrings(substr: String, matches: List<PartialCollectionMatch<Char>>): String {
-   return when {
-      matches.isEmpty() -> ""
-      else -> matches.joinToString("\n") { match ->
+   return matches.joinToString("\n") { match ->
          "Substring <\"${match.partOfValue.joinToString("")}\"> at indexes [${match.rangeOfValue}] matches at indexes [${match.rangeOfTarget}]"
-      }
    }
 }
+
+internal fun matchedSubstringsInContext(value: String, matches: List<PartialCollectionMatch<Char>>): String {
+   return matches.joinToString("\n") { match ->
+      val rangeOfMatch = match.rangeOfTarget
+      val margin = 5
+      val rangeToPrint = maxOf(0, match.rangeOfTarget.first)..minOf(match.rangeOfTarget.last, value.length)
+      "Substring at indexes [${match.rangeOfValue}] matches value at indexes [${match.rangeOfTarget}]\n" +
+         "Where >>> denotes characters before, +++ denotes the match, and <<< denotes characters after"
+   }
+}
+
+internal fun rangeWithMarginMapping(range: IntRange, rangeWithMargin: IntRange): String =
+   rangeWithMargin.joinToString("") { index ->
+      when {
+         index < range.first -> ">"
+         index in range -> "+"
+         else -> "<"
+      }
+   }
+
+internal fun rangeWithMargin(range: IntRange, margin: Int, maxIndex: Int): IntRange =
+   maxOf(0, range.first - margin)..minOf(range.last + margin, maxIndex)
 
 /**
  * Asserts that [this] is equal to [other] (ignoring case)
