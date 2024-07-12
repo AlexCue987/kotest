@@ -83,4 +83,10 @@ data class PartialCollectionMatch<T>(
       get() = matchedElement.indexInTarget + length - 1
    val partOfValue: List<T>
        get() = value.subList(matchedElement.indexInValue, matchedElement.indexInValue + length - 1)
+   val rangeOfValue: IntRange = rangeOfLength(matchedElement.indexInValue, length)
+   val rangeOfTarget: IntRange = rangeOfLength(matchedElement.indexInTarget, length)
+
+   companion object {
+      fun rangeOfLength(start: Int, length: Int): IntRange = (start..<start+length)
+   }
 }

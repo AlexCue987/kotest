@@ -8,7 +8,8 @@ import io.kotest.matchers.string.UUIDVersion.ANY
 import io.kotest.submatching.findPartialMatches
 import kotlin.contracts.contract
 import kotlin.text.RegexOption.IGNORE_CASE
-import io.kotest.similarity.topWithTiesBy
+import io.kotest.submatching.PartialCollectionMatch
+import io.kotest.submatching.topNWithTiesBy
 
 fun String?.shouldContainOnlyDigits(): String? {
    this should containOnlyDigits()
@@ -180,17 +181,26 @@ fun include(substr: String) = neverNullMatcher<String> { value ->
    val submatches = if(passed)
       ""
     else {
-//       val minLengthOfMatch = substr.length/3
-//       if(minLengthOfMatch > 1) {
-//          val partialMatches = findPartialMatches(substr, value, minLengthOfMatch).topWithTiesBy { it. }
-//          ""
-//       } else
+       val minLengthOfMatch = substr.length/3
+       if(minLengthOfMatch > 1) {
+          val partialMatches = findPartialMatches(substr, value, minLengthOfMatch).topNWithTiesBy(depth = 2) { it.length }
+          ""
+       } else
        ""
     }
    MatcherResult(
       passed,
       { "${value.print().value} should include substring ${substr.print().value}$submatches" },
       { "${value.print().value} should not include substring ${substr.print().value}" })
+}
+
+internal fun describeMatchedSubstrings(substr: String, matches: List<PartialCollectionMatch<Char>>): String {
+   return when {
+      matches.isEmpty() -> ""
+      else -> matches.joinToString("\n") { match ->
+         "Substring <\"${match.partOfValue.joinToString("")}\"> at indexes [${match.rangeOfValue}] "
+      }
+   }
 }
 
 /**
