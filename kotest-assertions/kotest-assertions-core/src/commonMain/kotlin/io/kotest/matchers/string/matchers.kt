@@ -198,7 +198,7 @@ internal fun describeMatchedSubstrings(substr: String, matches: List<PartialColl
    return when {
       matches.isEmpty() -> ""
       else -> matches.joinToString("\n") { match ->
-         "Substring <\"${match.partOfValue.joinToString("")}\"> at indexes [${match.rangeOfValue}] "
+         "Substring <\"${match.partOfValue.joinToString("")}\"> at indexes [${match.rangeOfValue}] matches at indexes [${match.rangeOfTarget}]"
       }
    }
 }

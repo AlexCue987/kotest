@@ -82,7 +82,7 @@ data class PartialCollectionMatch<T>(
    val endOfMatchAtTarget: Int
       get() = matchedElement.indexInTarget + length - 1
    val partOfValue: List<T>
-       get() = value.subList(matchedElement.indexInValue, matchedElement.indexInValue + length - 1)
+       get() = value.subList(matchedElement.indexInValue, matchedElement.indexInValue + length)
    val rangeOfValue: IntRange = rangeOfLength(matchedElement.indexInValue, length)
    val rangeOfTarget: IntRange = rangeOfLength(matchedElement.indexInTarget, length)
 

@@ -12,19 +12,19 @@ class DescribePartialMatchesTest: WordSpec() {
           "handle empty list of matches" {
              describeMatchedSubstrings("apple", listOf()) shouldBe ""
           }
-          "work on string without new lines" {
+          "work with several matches" {
              describeMatchedSubstrings("workload", listOf(
                 PartialCollectionMatch(
                    MatchedCollectionElement(indexInValue = 0, indexInTarget = 5),
                    length = 4,
-                   value = "work".toList()
+                   value = "workload".toList()
                 ),
                 PartialCollectionMatch(
                    MatchedCollectionElement(indexInValue = 4, indexInTarget = 0),
                    length = 4,
-                   value = "work".toList()
+                   value = "workload".toList()
                 )
-             )) shouldBe ""
+             )) shouldBe "Substring <\"work\"> at indexes [0..3] matches at indexes [5..8]\nSubstring <\"load\"> at indexes [4..7] matches at indexes [0..3]"
           }
        }
    }
