@@ -1,10 +1,10 @@
 package io.kotest.submatching
 
 
-internal fun findPartialMatches(value: String, target: String, minLength: Int) =
+fun findPartialMatches(value: String, target: String, minLength: Int) =
    findPartialMatches(value.toList(), target.toList(), minLength)
 
-internal fun<T> findPartialMatches(value: List<T>, target: List<T>, minLength: Int): List<PartialMatch<T>> {
+fun<T> findPartialMatches(value: List<T>, target: List<T>, minLength: Int): List<PartialCollectionMatch<T>> {
     val indexes = toCharIndex(target)
     val matches = value.asSequence().mapIndexed { index, char ->
         index to char
@@ -27,7 +27,7 @@ internal fun <T> matchedElements(
    indexes: Map<T, List<Int>>,
    elementAtIndex: Pair<Int, T>
 ) = indexes[elementAtIndex.second]?.map { index ->
-   MatchedElement(
+   MatchedCollectionElement(
       indexInValue = elementAtIndex.first,
       indexInTarget = index
    )
@@ -36,12 +36,12 @@ internal fun <T> matchedElements(
 internal fun <T> extendPartialMatchToRequiredLength(
    value: List<T>,
    target: List<T>,
-   matchedElement: MatchedElement,
+   matchedElement: MatchedCollectionElement,
    minLength: Int
-): PartialMatch<T>? {
+): PartialCollectionMatch<T>? {
    val lengthOfMatch = lengthOfMatch(value, target, matchedElement)
    return if (lengthOfMatch >= minLength) {
-      PartialMatch(
+      PartialCollectionMatch(
          matchedElement,
          lengthOfMatch,
          value
@@ -50,8 +50,8 @@ internal fun <T> extendPartialMatchToRequiredLength(
 }
 
 internal fun<T> removeShorterMatchesWithSameEnd(
-   matches: List<PartialMatch<T>>
-): List<PartialMatch<T>> {
+   matches: List<PartialCollectionMatch<T>>
+): List<PartialCollectionMatch<T>> {
    val matchesGroupedByEnd = matches.groupBy {
       it.endOfMatchAtTarget
    }
@@ -61,7 +61,7 @@ internal fun<T> removeShorterMatchesWithSameEnd(
 }
 
 internal fun<T> lengthOfMatch(
-   value: List<T>, target: List<T>, matchedElement: MatchedElement
+   value: List<T>, target: List<T>, matchedElement: MatchedCollectionElement
 ): Int {
    val maxLengthOfMatch = minOf(value.size - matchedElement.indexInValue, target.size - matchedElement.indexInTarget)
    return (1..maxLengthOfMatch).takeWhile { offset ->
@@ -69,13 +69,13 @@ internal fun<T> lengthOfMatch(
    }.lastOrNull() ?: 0
 }
 
-internal data class MatchedElement(
+data class MatchedCollectionElement(
    val indexInValue: Int,
    val indexInTarget: Int
 )
 
-internal data class PartialMatch<T>(
-   val matchedElement: MatchedElement,
+data class PartialCollectionMatch<T>(
+   val matchedElement: MatchedCollectionElement,
    val length: Int,
    val value: List<T>
 ) {

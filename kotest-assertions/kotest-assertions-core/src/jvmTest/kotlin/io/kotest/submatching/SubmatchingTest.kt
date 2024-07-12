@@ -14,26 +14,26 @@ class SubmatchingTest: WordSpec() {
          }
          "match end of one string to beginning of another" {
             findPartialMatches("broom", "roommate", minLength = 4) shouldBe listOf(
-               PartialMatch(MatchedElement(1, 0), 4, "broom".toList()))
+               PartialCollectionMatch(MatchedCollectionElement(1, 0), 4, "broom".toList()))
          }
          "match two middles" {
             findPartialMatches("room", "boot", minLength = 2) shouldBe listOf(
-               PartialMatch(MatchedElement(1, 1), 2, "room".toList()))
+               PartialCollectionMatch(MatchedCollectionElement(1, 1), 2, "room".toList()))
          }
          "find common end" {
             findPartialMatches("river", "driver", minLength = 3) shouldBe listOf(
-               PartialMatch(MatchedElement(0, 1), 5, "river".toList()))
+               PartialCollectionMatch(MatchedCollectionElement(0, 1), 5, "river".toList()))
          }
          "find two common substrings in same order" {
             findPartialMatches("roommate", "room-mate", minLength = 3) shouldBe listOf(
-               PartialMatch(MatchedElement(0, 0), 4, "roommate".toList()),
-               PartialMatch(MatchedElement(4, 5), 4, "roommate".toList()),
+               PartialCollectionMatch(MatchedCollectionElement(0, 0), 4, "roommate".toList()),
+               PartialCollectionMatch(MatchedCollectionElement(4, 5), 4, "roommate".toList()),
             )
          }
          "find two common substrings in opposite order" {
             findPartialMatches("downsize", "size down", minLength = 3) shouldBe listOf(
-               PartialMatch(MatchedElement(0, 5), 4, "downsize".toList()),
-               PartialMatch(MatchedElement(4, 0), 4, "downsize".toList()),
+               PartialCollectionMatch(MatchedCollectionElement(0, 5), 4, "downsize".toList()),
+               PartialCollectionMatch(MatchedCollectionElement(4, 0), 4, "downsize".toList()),
             )
          }
          "maintain performance".config(timeout = 1.seconds) {
@@ -49,7 +49,7 @@ class SubmatchingTest: WordSpec() {
                value = value,
                target = listOf(0, 1, 2, 3, 4, 3, 6),
                minLength = 4
-               ) shouldBe listOf(PartialMatch(MatchedElement(0, 1), 4, value),
+               ) shouldBe listOf(PartialCollectionMatch(MatchedCollectionElement(0, 1), 4, value),
             )
          }
       }
@@ -70,7 +70,7 @@ class SubmatchingTest: WordSpec() {
                'y' to listOf(4)
             ),
                elementAtIndex = 3 to 'u'
-            ) shouldBe listOf(MatchedElement(3, 1))
+            ) shouldBe listOf(MatchedCollectionElement(3, 1))
          }
          "return list of several elements" {
             matchedElements(indexes = mapOf(
@@ -80,25 +80,25 @@ class SubmatchingTest: WordSpec() {
             ),
                elementAtIndex = 1 to 'p'
             ) shouldBe listOf(
-               MatchedElement(1, 0),
-               MatchedElement(1, 2),
-               MatchedElement(1, 3),
+               MatchedCollectionElement(1, 0),
+               MatchedCollectionElement(1, 2),
+               MatchedCollectionElement(1, 3),
             )
          }
       }
       "extendPartialMatchToRequiredLength" should {
            "return submatch if it has required length" {
-              val matchedElement = MatchedElement(0, 1)
+              val matchedElement = MatchedCollectionElement(0, 1)
               val value = "table".toList()
               extendPartialMatchToRequiredLength(
                  value = value,
                  target = "stable".toList(),
                  matchedElement = matchedElement,
                  minLength = 5
-              ) shouldBe PartialMatch(matchedElement, 5, value)
+              ) shouldBe PartialCollectionMatch(matchedElement, 5, value)
            }
          "return null if submatch is too short" {
-            val matchedElement = MatchedElement(0, 1)
+            val matchedElement = MatchedCollectionElement(0, 1)
             val value = "rush".toList()
             extendPartialMatchToRequiredLength(
                value = value,
@@ -111,17 +111,17 @@ class SubmatchingTest: WordSpec() {
       "removeShorterMatchesWithSameEnd" should {
           "leave matches as is when there is nothing to remove" {
               val matches = listOf(
-                 PartialMatch(MatchedElement(0, 5), 4, "down".toList()),
-                 PartialMatch(MatchedElement(4, 0), 4, "size".toList()),
+                 PartialCollectionMatch(MatchedCollectionElement(0, 5), 4, "down".toList()),
+                 PartialCollectionMatch(MatchedCollectionElement(4, 0), 4, "size".toList()),
               )
              removeShorterMatchesWithSameEnd(matches) shouldBe matches
           }
          "remove shorter matches that are inside longer ones" {
             val matches = listOf(
-               PartialMatch(MatchedElement(0, 5), 4, "down".toList()),
-               PartialMatch(MatchedElement(4, 0), 4, "size".toList()),
-               PartialMatch(MatchedElement(1, 6), 3, "own".toList()),
-               PartialMatch(MatchedElement(5, 1), 3, "ize".toList()),
+               PartialCollectionMatch(MatchedCollectionElement(0, 5), 4, "down".toList()),
+               PartialCollectionMatch(MatchedCollectionElement(4, 0), 4, "size".toList()),
+               PartialCollectionMatch(MatchedCollectionElement(1, 6), 3, "own".toList()),
+               PartialCollectionMatch(MatchedCollectionElement(5, 1), 3, "ize".toList()),
             )
             removeShorterMatchesWithSameEnd(matches) shouldBe matches.filter { it.length == 4}
          }
@@ -143,7 +143,7 @@ class SubmatchingTest: WordSpec() {
                   lengthOfMatch(
                      value = "bug".toList(),
                      target = "feature".toList(),
-                     matchedElement = MatchedElement(0, start)
+                     matchedElement = MatchedCollectionElement(0, start)
                   ) shouldBe 0
                }
             }
@@ -152,35 +152,35 @@ class SubmatchingTest: WordSpec() {
             lengthOfMatch(
                value = "prone".toList(),
                target = "drone".toList(),
-               matchedElement = MatchedElement(0, 0)
+               matchedElement = MatchedCollectionElement(0, 0)
             ) shouldBe 0
          }
          "skip some chars at start" {
             lengthOfMatch(
                value = "prone".toList(),
                target = "drone".toList(),
-               matchedElement = MatchedElement(1, 1)
+               matchedElement = MatchedCollectionElement(1, 1)
             ) shouldBe 4
          }
          "find common start" {
             lengthOfMatch(
                value = "car".toList(),
                target = "cartoon".toList(),
-               matchedElement = MatchedElement(0, 0)
+               matchedElement = MatchedCollectionElement(0, 0)
             ) shouldBe 3
          }
          "stop at shorter substring in the middle of a loger one" {
             lengthOfMatch(
                value = "rip".toList(),
                target = "tripod".toList(),
-               matchedElement = MatchedElement(0, 1)
+               matchedElement = MatchedCollectionElement(0, 1)
             ) shouldBe 3
          }
          "find common end" {
             lengthOfMatch(
                value = "come".toList(),
                target = "outcome".toList(),
-               matchedElement = MatchedElement(0, 3)
+               matchedElement = MatchedCollectionElement(0, 3)
             ) shouldBe 4
          }
       }
