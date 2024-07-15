@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.conflateSubMatchWithMapping
 import io.kotest.matchers.string.describeMatchedSubstrings
+import io.kotest.matchers.string.matchedSubstringsInContext
 import io.kotest.matchers.string.rangeWithMargin
 import io.kotest.matchers.string.rangeWithMarginMapping
 import io.kotest.matchers.string.submatchWithMarginMapping
@@ -13,10 +14,24 @@ import io.kotest.submatching.PartialCollectionMatch
 class SubMatchersTest: WordSpec() {
    private val value = "The quick brown fox jumps over the lazy dog"
    init {
+      "matchedSubstringsInContext" should {
+         matchedSubstringsInContext(
+            value,
+            listOf(
+               PartialCollectionMatch(MatchedCollectionElement(0, 3), 5, value.toList()),
+               PartialCollectionMatch(MatchedCollectionElement(0, 20), 5, value.toList())
+            )
+         ) shouldBe listOf(
+            ">>>>+++++<<<<<",
+            "The quick brow",
+            ">>>>>+++++<<<<<",
+         " fox jumps over"
+         ).joinToString("\n")
+      }
       "submatchWithMarginMapping" should {
          submatchWithMarginMapping(
             value,
-            PartialCollectionMatch(MatchedCollectionElement(0, 20), 5, "jumps".toList())
+            PartialCollectionMatch(MatchedCollectionElement(0, 20), 5, value.toList())
             ) shouldBe listOf(
                ">>>>>+++++<<<<<",
                " fox jumps over"

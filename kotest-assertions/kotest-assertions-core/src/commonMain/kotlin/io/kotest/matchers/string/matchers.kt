@@ -201,12 +201,11 @@ internal fun describeMatchedSubstrings(substr: String, matches: List<PartialColl
 }
 
 internal fun matchedSubstringsInContext(value: String, matches: List<PartialCollectionMatch<Char>>): String {
-   return matches.joinToString("\n") { match ->
-      val rangeOfMatch = match.rangeOfTarget
-      val margin = 5
-      val rangeToPrint = maxOf(0, match.rangeOfTarget.first)..minOf(match.rangeOfTarget.last, value.length)
-      "Substring at indexes [${match.rangeOfValue}] matches value at indexes [${match.rangeOfTarget}]\n" +
-         "Where >>> denotes characters before, +++ denotes the match, and <<< denotes characters after"
+   val depth = 3
+   return matches
+      .topNWithTiesBy(depth = depth) { it.length }
+      .joinToString("\n") { match ->
+         submatchWithMarginMapping(value, match)
    }
 }
 
