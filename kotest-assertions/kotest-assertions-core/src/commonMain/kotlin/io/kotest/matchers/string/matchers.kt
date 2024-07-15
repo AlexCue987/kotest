@@ -210,17 +210,14 @@ internal fun matchedSubstringsInContext(value: String, matches: List<PartialColl
    }
 }
 
-internal fun rangeWithMarginMapping(range: IntRange, rangeWithMargin: IntRange): String =
-   rangeWithMargin.joinToString("") { index ->
-      when {
-         index < range.first -> ">"
-         index in range -> "+"
-         else -> "<"
-      }
-   }
-
-internal fun rangeWithMargin(range: IntRange, margin: Int, maxIndex: Int): IntRange =
-   maxOf(0, range.first - margin)..minOf(range.last + margin, maxIndex)
+internal fun submatchWithMarginMapping(value: String, match: PartialCollectionMatch<Char>): String {
+   val rangeOfMatch = match.rangeOfTarget
+   val margin = 5
+   val rangeWithMargin = rangeWithMargin(rangeOfMatch, margin, maxIndex = value.length - 1)
+   val rangeWithMarginMapping = rangeWithMarginMapping(rangeOfMatch, rangeWithMargin)
+   val submatchWithMargin = value.substring(rangeWithMargin)
+   return conflateSubMatchWithMapping(submatchWithMargin, rangeWithMarginMapping)
+}
 
 /**
  * Asserts that [this] is equal to [other] (ignoring case)
